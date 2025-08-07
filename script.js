@@ -116,9 +116,9 @@ function addInputFields(count) {
                 };
             }
             var resultDisplay = document.createElement("div");
-            resultDisplay.textContent = "Bán kính = " + r.toFixed(2) + " (cm)";
+            resultDisplay.textContent = "Rayon = " + r.toFixed(2) + " (cm)";
             if (inputVolumes.length >= 3) {
-                resultDisplay.textContent += ", Trục x = " + r2.toFixed(2) + " (cm), Trục y = " + r3.toFixed(2) + " (cm), Trục z = " + r4.toFixed(2) + " (cm)";
+                resultDisplay.textContent += ",  x = " + r2.toFixed(2) + " (cm),  y = " + r3.toFixed(2) + " (cm),  z = " + r4.toFixed(2) + " (cm)";
             }
             container.appendChild(resultDisplay);
         });
@@ -127,7 +127,7 @@ function addInputFields(count) {
         var ziso = 0;
         var Display1 = document.createElement("div");
         Display1.classList.add("classIsocenter");
-        Display1.textContent = "Tọa độ của ISOCENTER ";
+        Display1.textContent = "ISOCENTER coordinate : ";
         container.appendChild(Display1);
         var Display = document.createElement("div");
         Display.classList.add("classIsocenter2");
@@ -169,7 +169,7 @@ function addInputFields(count) {
         if (min3 <= 0 && max3 >= 0) {
             ziso = (max3 + min3) / 2;
         };
-        Display.innerHTML = "Trục x(Isocenter) là: " + xiso.toFixed(2) + " (cm)" + "<br>Trục y(Isocenter) là: " + yiso.toFixed(2) + " (cm)" + "<br>Trục z(Isocenter) là: " + ziso.toFixed(2) + " (cm)";
+        Display.innerHTML = " x (Isocenter) is: " + xiso.toFixed(2) + " (cm)" + "<br> y  (Isocenter) is: " + yiso.toFixed(2) + " (cm)" + "<br> z(Isocenter) is: " + ziso.toFixed(2) + " (cm)";
         container.appendChild(Display);
         var button2 = document.createElement("button");
         button2.textContent = "Optimization of SRS";
@@ -255,7 +255,7 @@ function addInputFields(count) {
             var Display2 = document.createElement("div");
             Display2.classList.add("collimator");
             t = 0;
-            Display2.innerHTML = 'Couch angle: C = 0° , Góc Gantry: 0 CW 179, Góc Collimator tối ưu: ' + table(0) + '°';
+            Display2.innerHTML = 'Couch angle: C = 0° , Gantry angle: 0 CW 179,  Optimized collimator angle: ' + table(0) + '°';
             t = 335;
             Display2.innerHTML += '<br> Couch angle: C = 335° , Gantry angle: 179 CCW 0, Optimized collimator angle: ' + table(335) + '°';
             t = 310;
@@ -297,3 +297,4 @@ document.addEventListener('contextmenu', event => event.preventDefault());
 
 
   
+
