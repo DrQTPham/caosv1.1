@@ -7,7 +7,7 @@
     box-sizing: border-box;
 }
 html {
-    background: url('varian.jpg')
+    background: url('varian.pnj')
         no-repeat center center fixed;
     background-size: cover;
     font-size: 62.5%;
@@ -143,5 +143,6 @@ input {
     right: 180px;
     font-size: 18px;
  }
+
 
 
