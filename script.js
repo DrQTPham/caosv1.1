@@ -6,9 +6,9 @@ function calculate() {
     if (isNaN(number) || !d) {
         document.getElementById("result").style.color = "Red";
         if (isNaN(number))
-            document.getElementById("result").textContent = "BẠN NHẬP KHÔNG PHẢI LÀ MỘT SỐ";
+            document.getElementById("result").textContent = "The input is not a number !!";
         else
-            document.getElementById("result").textContent = "BẠN PHẢI NHẬP SỐ TỰ NHIÊN";
+            document.getElementById("result").textContent = "You must enter a natural number !!";
     } else {
         document.getElementById("result").textContent = addInputFields(number);
     }
@@ -17,8 +17,8 @@ function addInputFields(count) {
     var container = document.querySelector(".container");
     container.innerHTML = "";
     var h2 = document.createElement("h2");
-    h2.innerHTML = "Nhập thông tin các thể tích điều trị: ";
-    h2.innerHTML += "<br> (Thể tích: V; Tọa độ: x,y,z)";
+    h2.innerHTML = "Please enter details for the target volumes: ";
+    h2.innerHTML += "<br> (Volume: V; Coordinate: x,y,z)";
     container.appendChild(h2);
     function truc_x(c) {
         var radians = c * Math.PI / 180;
@@ -255,21 +255,21 @@ function addInputFields(count) {
             var Display2 = document.createElement("div");
             Display2.classList.add("collimator");
             t = 0;
-            Display2.innerHTML = 'Góc giường: C = 0 , Góc Gantry: 0 CW 179, Góc Collimator tối ưu: ' + table(0) + '°';
+            Display2.innerHTML = 'Couch angle: C = 0° , Góc Gantry: 0 CW 179, Góc Collimator tối ưu: ' + table(0) + '°';
             t = 335;
-            Display2.innerHTML += '<br> Góc giường: C = 335 , Góc Gantry: 179 CCW 0, Góc Collimator tối ưu: ' + table(335) + '°';
+            Display2.innerHTML += '<br> Couch angle: C = 335° , Gantry angle: 179 CCW 0, Optimized collimator angle: ' + table(335) + '°';
             t = 310;
-            Display2.innerHTML += '<br>Góc giường: C = 310 , Góc Gantry: 0 CW 179, Góc Collimator tối ưu: ' + table(310) + '°';
+            Display2.innerHTML += '<br>Couch angle: C = 310° , Gantry angle: 0 CW 179, Optimized collimator angle: ' + table(310) + '°';
             t = 285;
-            Display2.innerHTML += '<br>Góc giường: C = 285 , Góc Gantry: 179 CCW 0, Góc Collimator tối ưu: ' + table(285) + '°';
+            Display2.innerHTML += '<br>Couch angle: C = 285° , Gantry angle: 179 CCW 0, Optimized collimator angle: ' + table(285) + '°';
             t = 0;
-            Display2.innerHTML += '<br>Góc giường: C = 0 , Góc Gantry: 0 CCW 181, Góc Collimator tối ưu: ' + table(0) + '°';
+            Display2.innerHTML += '<br>Couch angle: C = 0° , Gantry angle: 0 CCW 181, Optimized collimator angle: ' + table(0) + '°';
             t = 25;
-            Display2.innerHTML += '<br>Góc giường: C = 25 , Góc Gantry: 181 CW 0, Góc Collimator tối ưu: ' + table(25) + '°';
+            Display2.innerHTML += '<br>Couch angle: C = 25° , Gantry angle: 181 CW 0, Optimized collimator angle: ' + table(25) + '°';
             t = 50;
-            Display2.innerHTML += '<br>Góc giường: C = 50 , Góc Gantry: 0 CCW 181, Góc Collimator tối ưu: ' + table(50) + '°';
+            Display2.innerHTML += '<br>Couch angle: C = 50° , Gantry angle: 0 CCW 181, Optimized collimator angle: ' + table(50) + '°';
             t = 75;
-            Display2.innerHTML += '<br>Góc giường: C = 75 , Góc Gantry: 181 CW 0, Góc Collimator tối ưu: ' + table(75) + '°';
+            Display2.innerHTML += '<br>Couch angle: C = 75° , Gantry angle: 181 CW 0, Optimized collimator angle: ' + table(75) + '°';
             container.appendChild(Display2);
         };
         container.appendChild(button2);
@@ -294,5 +294,6 @@ document.addEventListener("keydown", function(event) {
     }
 });
 document.addEventListener('contextmenu', event => event.preventDefault());
+
 
   
