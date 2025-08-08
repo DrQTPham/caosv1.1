@@ -1,36 +1,38 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>CAOS-V2</title>
-  <link rel="stylesheet" href="styles.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>CAOS-V2</title>
+    <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <div class="header">
-    <img src="logo108.png" alt="Logo 108" class="logo-left" />
-    <img src="logohust.png" alt="Logo HUST" class="logo-right" />
-    <h1>Collimator Angle Optimization of SRS - Version 2.0</h1>
-    <h2>Authors: Quang Trung PHẠM & Tien Manh PHAN</h2>
-  </div>
-
-  <div class="main">
-    <div class="left">
-      <h2>Enter number of target volumes</h2>
-      <input type="number" id="inputNumber" placeholder="e.g. 3" min="1" />
-      <button onclick="generateInputs()">Start</button>
-
-      <div class="volume-inputs" id="volumeInputs"></div>
-      <button onclick="calculateOptimalAngle()">Calculate Optimal Collimator Angle</button>
+    <div class="header">
+        <img src="logo108.png" alt="Logo 108" class="logo-left" />
+        <img src="logohust.png" alt="Logo HUST" class="logo-right" />
+        <h1>Collimator Angle Optimization of SRS Version 2.0</h1>
+        <h2>Authors: Quang Trung PHẠM & Tien Manh PHAN</h2>
     </div>
 
-    <div class="right">
-      <h2>Results</h2>
-      <div id="result">Isocenter and Optimal Angle will be shown here.</div>
-    </div>
-  </div>
+    <div class="main-container">
+        <!-- Left Side: Input Section -->
+        <div class="input-section">
+            <h3>Enter the number of target volumes:</h3>
+            <input type="number" id="inputNumber" placeholder="e.g., 3" min="1" />
+            <button onclick="calculate()">Start</button>
+            <div class="container"></div>
+        </div>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/12.4.1/math.js" integrity="sha512-B2caA1wJW/b3Jhbhbb9waDjQ7NdG30fkULe9CgCzilQ8CUEdh2NdyGi/GrB+0kQdgfBbUdiLyAP2xdcDzNA6Ow==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-  <script src="script.js"></script>
+        <!-- Right Side: Result Section -->
+        <div class="result-section">
+            <div id="result">
+                <!-- Will show isocenter coordinates and optimal angle here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- JS Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/12.4.1/math.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
