@@ -4,119 +4,192 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>CAOS-V2</title>
-  <link rel="stylesheet" href="styles.css" />
   <style>
     body {
       font-family: Arial, sans-serif;
-      margin: 20px;
-      background-color: #f2f2f2;
+      margin: 0;
+      background-color: #f9f9f9;
+      color: #333;
     }
 
     .header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
+      background-color: #007ACC;
+      color: white;
+      padding: 20px;
+      text-align: center;
+      position: relative;
     }
 
     .header img {
-      height: 70px;
+      position: absolute;
+      top: 20px;
+      width: 80px;
+      height: auto;
     }
 
-    .title-block {
-      text-align: center;
-      flex-grow: 1;
+    .logo-left {
+      left: 20px;
     }
 
-    .title-block h1 {
-      font-size: 20px;
-      margin: 5px 0;
-      color: #003366;
+    .logo-right {
+      right: 20px;
     }
 
-    .main-container {
+    .header h1 {
+      margin: 10px 0;
+      font-size: 24px;
+    }
+
+    .main {
       display: flex;
-      gap: 20px;
+      justify-content: space-around;
+      align-items: flex-start;
+      padding: 40px 20px;
+      max-width: 1200px;
+      margin: 0 auto;
     }
 
-    .input-section,
-    .result-section {
-      flex: 1;
-      background-color: #ffffff;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    .left, .right {
+      width: 45%;
+      background-color: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
 
-    .input-section h1,
-    .result-section h1 {
-      font-size: 18px;
-      margin-bottom: 10px;
-      color: #003366;
+    .left h2, .right h2 {
+      margin-bottom: 15px;
     }
 
     input[type="number"] {
-      padding: 10px;
-      font-size: 16px;
-      width: 100%;
-      margin-top: 5px;
-      margin-bottom: 15px;
+      padding: 8px;
+      width: 90%;
+      margin-bottom: 10px;
       border: 1px solid #ccc;
-      border-radius: 4px;
+      border-radius: 5px;
     }
 
     button {
       padding: 10px 20px;
       font-size: 16px;
-      background-color: #003366;
+      background-color: #007ACC;
       color: white;
       border: none;
-      border-radius: 4px;
+      border-radius: 5px;
       cursor: pointer;
     }
 
     button:hover {
-      background-color: #005599;
+      background-color: #005f99;
     }
 
     #result {
-      margin-top: 15px;
-      white-space: pre-line;
-      color: #003366;
+      font-weight: bold;
+      color: #007ACC;
+      font-size: 18px;
+    }
+
+    .volume-group {
+      border: 1px solid #ccc;
+      padding: 10px;
+      margin-bottom: 15px;
+      border-radius: 5px;
+    }
+
+    .volume-group h3 {
+      margin: 0 0 10px 0;
+      font-size: 16px;
+      color: #333;
     }
   </style>
 </head>
 <body>
 
-  <!-- Logo + Tiêu đề -->
   <div class="header">
-    <img src="logo108.png" alt="Logo 108" />
-    <div class="title-block">
-      <h1>Collimator Angle Optimization of SRS - Version 2.0</h1>
-      <h1>Authors: Quang Trung PHẠM (qtphamhus@gmail.com) and Tien Manh PHAN</h1>
-    </div>
-    <img src="logohust.png" alt="Logo HUST" />
+    <img src="logo108.png" alt="Logo 108" class="logo-left" />
+    <img src="logohust.png" alt="Logo HUST" class="logo-right" />
+    <h1>Collimator Angle Optimization of SRS - Version 2.0</h1>
+    <h1>Authors: Quang Trung PHẠM & Tien Manh PHAN</h1>
   </div>
 
-  <!-- Nội dung chính chia 2 bên -->
-  <div class="main-container">
-    <!-- Bên trái: Nhập dữ liệu -->
-    <div class="input-section">
-      <h1>Enter the number of target volumes:</h1>
-      <input type="number" id="inputNumber" placeholder="Enter a natural number" />
-      <button onclick="calculate()">Start</button>
-      <div class="container"></div>
+  <div class="main">
+    <div class="left">
+      <h2>Enter number of lesions</h2>
+      <input type="number" id="inputNumber" placeholder="e.g. 3">
+      <button onclick="generateInputs()">Start</button>
+
+      <div id="volumeInputs"></div>
     </div>
 
-    <!-- Bên phải: Hiển thị kết quả -->
-    <div class="result-section">
-      <h1>Isocenter Coordinate and Optimization</h1>
-      <div id="result"></div>
+    <div class="right">
+      <h2>Result</h2>
+      <div id="result">...</div>
     </div>
   </div>
 
-  <!-- Script -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/12.4.1/math.js" integrity="sha512-B2caA1wJW/b3Jhbhbb9waDjQ7NdG30fkULe9CgCzilQ8CUEdh2NdyGi/GrB+0kQdgfBbUdiLyAP2xdcDzNA6Ow==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-  <script src="script.js"></script>
+  <script>
+    function generateInputs() {
+      const num = parseInt(document.getElementById('inputNumber').value);
+      const container = document.getElementById('volumeInputs');
+      const result = document.getElementById('result');
+
+      container.innerHTML = '';
+      result.innerHTML = '...';
+
+      if (!num || isNaN(num) || num < 1) {
+        container.innerHTML = '<p style="color:red;">⚠️ Please enter a valid number ≥ 1</p>';
+        return;
+      }
+
+      for (let i = 1; i <= num; i++) {
+        const group = document.createElement('div');
+        group.className = 'volume-group';
+        group.innerHTML = `
+          <h3>Lesion ${i}</h3>
+          <input type="number" placeholder="Volume (mm³)" id="v${i}"><br>
+          <input type="number" placeholder="X Coordinate (mm)" id="x${i}">
+          <input type="number" placeholder="Y Coordinate (mm)" id="y${i}">
+          <input type="number" placeholder="Z Coordinate (mm)" id="z${i}">
+        `;
+        container.appendChild(group);
+      }
+
+      const confirmBtn = document.createElement('button');
+      confirmBtn.textContent = 'Submit Data';
+      confirmBtn.onclick = showResults;
+      container.appendChild(confirmBtn);
+    }
+
+    function showResults() {
+      const num = parseInt(document.getElementById('inputNumber').value);
+      let sumX = 0, sumY = 0, sumZ = 0;
+      let summary = "<ul>";
+
+      for (let i = 1; i <= num; i++) {
+        const v = parseFloat(document.getElementById(`v${i}`).value) || 0;
+        const x = parseFloat(document.getElementById(`x${i}`).value) || 0;
+        const y = parseFloat(document.getElementById(`y${i}`).value) || 0;
+        const z = parseFloat(document.getElementById(`z${i}`).value) || 0;
+
+        sumX += x;
+        sumY += y;
+        sumZ += z;
+
+        summary += `<li>Lesion ${i}: Volume = ${v} mm³, Coordinates = (X=${x}, Y=${y}, Z=${z})</li>`;
+      }
+
+      const isoX = (sumX / num).toFixed(2);
+      const isoY = (sumY / num).toFixed(2);
+      const isoZ = (sumZ / num).toFixed(2);
+
+      // Dummy collimator angle formula (replace with real calculation if needed)
+      const angle = Math.floor((Math.atan2(sumY, sumX) * 180 / Math.PI + 360) % 360);
+
+      summary += `</ul><p><strong>Isocenter:</strong> (X=${isoX}, Y=${isoY}, Z=${isoZ})</p>`;
+      summary += `<p><strong>Optimal Collimator Angle:</strong> ${angle}°</p>`;
+
+      document.getElementById('result').innerHTML = summary;
+    }
+  </script>
 </body>
 </html>
