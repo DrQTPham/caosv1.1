@@ -8,59 +8,79 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 40px;
-            background-color: #f8f8f8;
+            margin: 20px;
+            background-color: #f2f2f2;
         }
 
         .header {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
         }
 
         .header img {
-            height: 80px;
+            height: 70px;
         }
 
         .title-block {
-            text-align: center;
             flex-grow: 1;
+            text-align: center;
         }
 
-        .main-content {
+        .title-block h1 {
+            margin: 5px 0;
+            font-size: 20px;
+        }
+
+        .main-container {
             display: flex;
             justify-content: space-between;
+            gap: 20px;
         }
 
         .input-section, .result-section {
-            width: 48%;
+            flex: 1;
             padding: 20px;
             background-color: #ffffff;
             border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .input-section h1,
+        .result-section h1 {
+            font-size: 18px;
+            margin-bottom: 10px;
         }
 
         input[type="number"] {
             padding: 10px;
             font-size: 16px;
             width: 100%;
-            margin-top: 10px;
-            margin-bottom: 20px;
+            margin-top: 5px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
         }
 
         button {
             padding: 10px 20px;
             font-size: 16px;
+            background-color: #003366;
+            color: white;
+            border: none;
+            border-radius: 4px;
             cursor: pointer;
         }
 
-        h1 {
-            font-size: 20px;
+        button:hover {
+            background-color: #005599;
         }
 
         #result {
+            margin-top: 15px;
             color: #003366;
+            white-space: pre-line;
         }
     </style>
 </head>
@@ -76,9 +96,9 @@
         <img src="logohust.png" alt="Logo HUST">
     </div>
 
-    <!-- Nội dung chính -->
-    <div class="main-content">
-        <!-- Bên trái: Nhập dữ liệu -->
+    <!-- Khối nội dung chia 2 bên -->
+    <div class="main-container">
+        <!-- Bên trái: Nhập số liệu -->
         <div class="input-section">
             <h1>Enter the number of target volumes:</h1>
             <input type="number" id="inputNumber" placeholder="Enter a natural number">
@@ -86,10 +106,10 @@
             <div class="container"></div>
         </div>
 
-        <!-- Bên phải: Hiển thị kết quả -->
+        <!-- Bên phải: Kết quả tính toán -->
         <div class="result-section">
-            <h1>Calculation Result:</h1>
-            <h1 id="result"></h1>
+            <h1>Isocenter Coordinate and Optimization</h1>
+            <div id="result"></div>
         </div>
     </div>
 
