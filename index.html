@@ -22,27 +22,27 @@
 
     .header img {
       position: absolute;
-      top: 20px;
+      top: 10px;
       width: 80px;
       height: auto;
     }
 
-    .logo-left {
+    .header .logo-left {
       left: 20px;
     }
 
-    .logo-right {
+    .header .logo-right {
       right: 20px;
     }
 
     .header h1 {
-      margin: 10px 0;
-      font-size: 24px;
+      margin: 5px 0;
+      font-size: 22px;
     }
 
     .main {
       display: flex;
-      justify-content: space-around;
+      justify-content: space-between;
       align-items: flex-start;
       padding: 40px 20px;
       max-width: 1200px;
@@ -50,18 +50,18 @@
     }
 
     .left, .right {
-      width: 45%;
+      width: 48%;
       background-color: white;
       padding: 30px;
       border-radius: 10px;
       box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
 
-    .left h2, .right h2 {
+    h2 {
       margin-bottom: 15px;
     }
 
-    input[type="number"] {
+    input[type="number"], input[type="text"] {
       padding: 8px;
       width: 90%;
       margin-bottom: 10px;
@@ -89,6 +89,10 @@
       font-size: 18px;
     }
 
+    .volume-inputs {
+      margin-top: 20px;
+    }
+
     .volume-group {
       border: 1px solid #ccc;
       padding: 10px;
@@ -114,15 +118,15 @@
 
   <div class="main">
     <div class="left">
-      <h2>Enter number of lesions</h2>
+      <h2>Enter number of target volumes</h2>
       <input type="number" id="inputNumber" placeholder="e.g. 3">
       <button onclick="generateInputs()">Start</button>
 
-      <div id="volumeInputs"></div>
+      <div class="volume-inputs" id="volumeInputs"></div>
     </div>
 
     <div class="right">
-      <h2>Result</h2>
+      <h2>Results</h2>
       <div id="result">...</div>
     </div>
   </div>
@@ -132,12 +136,11 @@
       const num = parseInt(document.getElementById('inputNumber').value);
       const container = document.getElementById('volumeInputs');
       const result = document.getElementById('result');
-
       container.innerHTML = '';
       result.innerHTML = '...';
 
       if (!num || isNaN(num) || num < 1) {
-        container.innerHTML = '<p style="color:red;">⚠️ Please enter a valid number ≥ 1</p>';
+        container.innerHTML = '<p style="color:red;">⚠️ Please enter a valid natural number (≥1)</p>';
         return;
       }
 
@@ -145,48 +148,54 @@
         const group = document.createElement('div');
         group.className = 'volume-group';
         group.innerHTML = `
-          <h3>Lesion ${i}</h3>
-          <input type="number" placeholder="Volume (mm³)" id="v${i}"><br>
-          <input type="number" placeholder="X Coordinate (mm)" id="x${i}">
-          <input type="number" placeholder="Y Coordinate (mm)" id="y${i}">
-          <input type="number" placeholder="Z Coordinate (mm)" id="z${i}">
+          <h3>Target Volume ${i}</h3>
+          <input type="text" placeholder="Volume Name" id="name${i}"><br>
+          <input type="number" placeholder="X Coordinate" id="x${i}">
+          <input type="number" placeholder="Y Coordinate" id="y${i}">
+          <input type="number" placeholder="Z Coordinate" id="z${i}"><br>
+          <input type="number" placeholder="Radius (mm)" id="r${i}">
         `;
         container.appendChild(group);
       }
 
       const confirmBtn = document.createElement('button');
-      confirmBtn.textContent = 'Submit Data';
+      confirmBtn.textContent = 'Submit Volumes';
       confirmBtn.onclick = showResults;
       container.appendChild(confirmBtn);
     }
 
     function showResults() {
       const num = parseInt(document.getElementById('inputNumber').value);
-      let sumX = 0, sumY = 0, sumZ = 0;
+      let coords = [];
       let summary = "<ul>";
 
       for (let i = 1; i <= num; i++) {
-        const v = parseFloat(document.getElementById(`v${i}`).value) || 0;
-        const x = parseFloat(document.getElementById(`x${i}`).value) || 0;
-        const y = parseFloat(document.getElementById(`y${i}`).value) || 0;
-        const z = parseFloat(document.getElementById(`z${i}`).value) || 0;
+        const name = document.getElementById(`name${i}`).value || `Volume ${i}`;
+        const x = parseFloat(document.getElementById(`x${i}`).value);
+        const y = parseFloat(document.getElementById(`y${i}`).value);
+        const z = parseFloat(document.getElementById(`z${i}`).value);
+        const r = parseFloat(document.getElementById(`r${i}`).value);
 
-        sumX += x;
-        sumY += y;
-        sumZ += z;
-
-        summary += `<li>Lesion ${i}: Volume = ${v} mm³, Coordinates = (X=${x}, Y=${y}, Z=${z})</li>`;
+        coords.push({ x, y, z });
+        summary += `<li><strong>${name}</strong>: (X=${x}, Y=${y}, Z=${z}), Radius=${r} mm</li>`;
       }
 
+      // Tính toán tọa độ isocenter trung bình
+      let sumX = 0, sumY = 0, sumZ = 0;
+      coords.forEach(p => {
+        sumX += p.x;
+        sumY += p.y;
+        sumZ += p.z;
+      });
       const isoX = (sumX / num).toFixed(2);
       const isoY = (sumY / num).toFixed(2);
       const isoZ = (sumZ / num).toFixed(2);
 
-      // Dummy collimator angle formula (replace with real calculation if needed)
-      const angle = Math.floor((Math.atan2(sumY, sumX) * 180 / Math.PI + 360) % 360);
+      // Giả định thuật toán chọn collimator angle đơn giản (demo):
+      const optimalAngle = (Math.atan2(sumY, sumX) * 180 / Math.PI).toFixed(2);
 
-      summary += `</ul><p><strong>Isocenter:</strong> (X=${isoX}, Y=${isoY}, Z=${isoZ})</p>`;
-      summary += `<p><strong>Optimal Collimator Angle:</strong> ${angle}°</p>`;
+      summary += `</ul><p><strong>Isocenter:</strong> (${isoX}, ${isoY}, ${isoZ})</p>`;
+      summary += `<p><strong>Suggested Collimator Angle:</strong> ${optimalAngle}°</p>`;
 
       document.getElementById('result').innerHTML = summary;
     }
