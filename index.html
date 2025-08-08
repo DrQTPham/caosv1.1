@@ -4,193 +4,33 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>CAOS-V2</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      background-color: #f9f9f9;
-      color: #333;
-    }
-
-    .header {
-      background-color: #007ACC;
-      color: white;
-      padding: 20px;
-      text-align: center;
-      position: relative;
-    }
-
-    .header img {
-      position: absolute;
-      top: 10px;
-      width: 80px;
-      height: auto;
-    }
-
-    .header .logo-left {
-      left: 20px;
-    }
-
-    .header .logo-right {
-      right: 20px;
-    }
-
-    .header h1 {
-      margin: 5px 0;
-      font-size: 22px;
-    }
-
-    .main {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      padding: 40px 20px;
-      max-width: 1200px;
-      margin: 0 auto;
-    }
-
-    .left, .right {
-      width: 48%;
-      background-color: white;
-      padding: 30px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    }
-
-    h2 {
-      margin-bottom: 15px;
-    }
-
-    input[type="number"], input[type="text"] {
-      padding: 8px;
-      width: 90%;
-      margin-bottom: 10px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-    }
-
-    button {
-      padding: 10px 20px;
-      font-size: 16px;
-      background-color: #007ACC;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-
-    button:hover {
-      background-color: #005f99;
-    }
-
-    #result {
-      font-weight: bold;
-      color: #007ACC;
-      font-size: 18px;
-    }
-
-    .volume-inputs {
-      margin-top: 20px;
-    }
-
-    .volume-group {
-      border: 1px solid #ccc;
-      padding: 10px;
-      margin-bottom: 15px;
-      border-radius: 5px;
-    }
-
-    .volume-group h3 {
-      margin: 0 0 10px 0;
-      font-size: 16px;
-      color: #333;
-    }
-  </style>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-
   <div class="header">
     <img src="logo108.png" alt="Logo 108" class="logo-left" />
     <img src="logohust.png" alt="Logo HUST" class="logo-right" />
     <h1>Collimator Angle Optimization of SRS - Version 2.0</h1>
-    <h1>Authors: Quang Trung PHẠM & Tien Manh PHAN</h1>
+    <h2>Authors: Quang Trung PHẠM & Tien Manh PHAN</h2>
   </div>
 
   <div class="main">
     <div class="left">
       <h2>Enter number of target volumes</h2>
-      <input type="number" id="inputNumber" placeholder="e.g. 3">
+      <input type="number" id="inputNumber" placeholder="e.g. 3" min="1" />
       <button onclick="generateInputs()">Start</button>
 
       <div class="volume-inputs" id="volumeInputs"></div>
+      <button onclick="calculateOptimalAngle()">Calculate Optimal Collimator Angle</button>
     </div>
 
     <div class="right">
       <h2>Results</h2>
-      <button onclick="calculateIsocenter()">Calculate Isocenter</button>
-      <div id="result">...</div>
+      <div id="result">Isocenter and Optimal Angle will be shown here.</div>
     </div>
   </div>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/12.4.1/math.js"
-    integrity="sha512-B2caA1wJW/b3Jhbhbb9waDjQ7NdG30fkULe9CgCzilQ8CUEdh2NdyGi/GrB+0kQdgfBbUdiLyAP2xdcDzNA6Ow=="
-    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-
-  <script>
-    function generateInputs() {
-      const num = parseInt(document.getElementById("inputNumber").value);
-      const container = document.getElementById("volumeInputs");
-      container.innerHTML = ""; // Xoá nội dung cũ
-
-      if (isNaN(num) || num <= 0) {
-        container.innerHTML = "<p>Please enter a valid number.</p>";
-        return;
-      }
-
-      for (let i = 1; i <= num; i++) {
-        const group = document.createElement("div");
-        group.className = "volume-group";
-
-        group.innerHTML = `
-          <h3>Target Volume ${i}</h3>
-          <input type="number" id="x${i}" placeholder="X Coordinate">
-          <input type="number" id="y${i}" placeholder="Y Coordinate">
-          <input type="number" id="z${i}" placeholder="Z Coordinate">
-        `;
-
-        container.appendChild(group);
-      }
-    }
-
-    function calculateIsocenter() {
-      const num = parseInt(document.getElementById("inputNumber").value);
-      if (isNaN(num) || num <= 0) {
-        document.getElementById("result").innerText = "Invalid number of volumes.";
-        return;
-      }
-
-      let sumX = 0, sumY = 0, sumZ = 0;
-      for (let i = 1; i <= num; i++) {
-        const x = parseFloat(document.getElementById(`x${i}`).value);
-        const y = parseFloat(document.getElementById(`y${i}`).value);
-        const z = parseFloat(document.getElementById(`z${i}`).value);
-
-        if (isNaN(x) || isNaN(y) || isNaN(z)) {
-          document.getElementById("result").innerText = `Please enter valid coordinates for volume ${i}.`;
-          return;
-        }
-
-        sumX += x;
-        sumY += y;
-        sumZ += z;
-      }
-
-      const isoX = (sumX / num).toFixed(2);
-      const isoY = (sumY / num).toFixed(2);
-      const isoZ = (sumZ / num).toFixed(2);
-
-      document.getElementById("result").innerText = `Isocenter Coordinate: (${isoX}, ${isoY}, ${isoZ})`;
-    }
-  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/12.4.1/math.js" integrity="sha512-B2caA1wJW/b3Jhbhbb9waDjQ7NdG30fkULe9CgCzilQ8CUEdh2NdyGi/GrB+0kQdgfBbUdiLyAP2xdcDzNA6Ow==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="script.js"></script>
 </body>
 </html>
