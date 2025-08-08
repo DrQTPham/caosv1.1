@@ -1,83 +1,101 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>CAOS-V2</title>
-  <link rel="stylesheet" href="styles.css" />
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CAOS-V2</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            background-color: #f8f8f8;
+        }
 
-    .header {
-      text-align: center;
-      background-color: #f0f0f0;
-      padding: 20px 10px;
-    }
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 30px;
+        }
 
-    .header h1 {
-      margin: 5px 0;
-    }
+        .header img {
+            height: 80px;
+        }
 
-    .main {
-      display: flex;
-      justify-content: space-between;
-      padding: 20px;
-    }
+        .title-block {
+            text-align: center;
+            flex-grow: 1;
+        }
 
-    .left-panel, .right-panel {
-      width: 48%;
-    }
+        .main-content {
+            display: flex;
+            justify-content: space-between;
+        }
 
-    .left-panel input[type="number"] {
-      width: 100%;
-      padding: 10px;
-      margin: 10px 0;
-      font-size: 1rem;
-    }
+        .input-section, .result-section {
+            width: 48%;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
 
-    button {
-      padding: 10px 20px;
-      font-size: 1rem;
-      cursor: pointer;
-    }
+        input[type="number"] {
+            padding: 10px;
+            font-size: 16px;
+            width: 100%;
+            margin-top: 10px;
+            margin-bottom: 20px;
+        }
 
-    .result {
-      background-color: #e8f0fe;
-      padding: 10px;
-      margin-top: 20px;
-      min-height: 100px;
-    }
-  </style>
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        h1 {
+            font-size: 20px;
+        }
+
+        #result {
+            color: #003366;
+        }
+    </style>
 </head>
 <body>
 
-  <div class="header">
-    <h1>Collimator Angle Optimization of SRS - Version 2.0</h1>
-    <h1>Authors: Quang Trung PHẠM (qtphamhus@gmail.com) and Tien Manh PHAN</h1>
-  </div>
-
-  <div class="main">
-    <!-- Left: Input -->
-    <div class="left-panel">
-      <h2>Enter the number of target volumes:</h2>
-      <input type="number" id="inputNumber" placeholder="Enter a natural number" min="1"/>
-      <button onclick="calculate()">Start</button>
+    <!-- Logo và tiêu đề -->
+    <div class="header">
+        <img src="logo108.png" alt="Logo 108">
+        <div class="title-block">
+            <h1>Collimator Angle Optimization of SRS - Version 2.0</h1>
+            <h1>Authors: Quang Trung PHẠM (qtphamhus@gmail.com) and Tien Manh PHAN</h1>
+        </div>
+        <img src="logohust.png" alt="Logo HUST">
     </div>
 
-    <!-- Right: Result -->
-    <div class="right-panel">
-      <h2>Result</h2>
-      <div id="result" class="result"></div>
-    </div>
-  </div>
+    <!-- Nội dung chính -->
+    <div class="main-content">
+        <!-- Bên trái: Nhập dữ liệu -->
+        <div class="input-section">
+            <h1>Enter the number of target volumes:</h1>
+            <input type="number" id="inputNumber" placeholder="Enter a natural number">
+            <button onclick="calculate()">Start</button>
+            <div class="container"></div>
+        </div>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/12.4.1/math.js"
-          integrity="sha512-B2caA1wJW/b3Jhbhbb9waDjQ7NdG30fkULe9CgCzilQ8CUEdh2NdyGi/GrB+0kQdgfBbUdiLyAP2xdcDzNA6Ow=="
-          crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-  <script src="script.js"></script>
+        <!-- Bên phải: Hiển thị kết quả -->
+        <div class="result-section">
+            <h1>Calculation Result:</h1>
+            <h1 id="result"></h1>
+        </div>
+    </div>
+
+    <!-- Script -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/12.4.1/math.js" integrity="sha512-B2caA1wJW/b3Jhbhbb9waDjQ7NdG30fkULe9CgCzilQ8CUEdh2NdyGi/GrB+0kQdgfBbUdiLyAP2xdcDzNA6Ow==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="script.js"></script>
+
 </body>
 </html>
