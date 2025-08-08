@@ -127,76 +127,69 @@
 
     <div class="right">
       <h2>Results</h2>
+      <button onclick="calculateIsocenter()">Calculate Isocenter</button>
       <div id="result">...</div>
     </div>
   </div>
 
-  <!-- MathJS Library -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/12.4.1/math.js" integrity="sha512-B2caA1wJW/b3Jhbhbb9waDjQ7NdG30fkULe9CgCzilQ8CUEdh2NdyGi/GrB+0kQdgfBbUdiLyAP2xdcDzNA6Ow==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/12.4.1/math.js"
+    integrity="sha512-B2caA1wJW/b3Jhbhbb9waDjQ7NdG30fkULe9CgCzilQ8CUEdh2NdyGi/GrB+0kQdgfBbUdiLyAP2xdcDzNA6Ow=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
   <script>
     function generateInputs() {
-      const num = parseInt(document.getElementById('inputNumber').value);
-      const container = document.getElementById('volumeInputs');
-      const result = document.getElementById('result');
-      container.innerHTML = '';
-      result.innerHTML = '...';
+      const num = parseInt(document.getElementById("inputNumber").value);
+      const container = document.getElementById("volumeInputs");
+      container.innerHTML = ""; // Xoá nội dung cũ
 
-      if (!num || isNaN(num) || num < 1) {
-        container.innerHTML = '<p style="color:red;">⚠️ Please enter a valid natural number (≥1)</p>';
+      if (isNaN(num) || num <= 0) {
+        container.innerHTML = "<p>Please enter a valid number.</p>";
         return;
       }
 
       for (let i = 1; i <= num; i++) {
-        const group = document.createElement('div');
-        group.className = 'volume-group';
+        const group = document.createElement("div");
+        group.className = "volume-group";
+
         group.innerHTML = `
           <h3>Target Volume ${i}</h3>
-          <input type="number" placeholder="X Coordinate" id="x${i}"><br>
-          <input type="number" placeholder="Y Coordinate" id="y${i}"><br>
-          <input type="number" placeholder="Z Coordinate" id="z${i}"><br>
-          <input type="number" placeholder="Radius (mm)" id="r${i}">
+          <input type="number" id="x${i}" placeholder="X Coordinate">
+          <input type="number" id="y${i}" placeholder="Y Coordinate">
+          <input type="number" id="z${i}" placeholder="Z Coordinate">
         `;
+
         container.appendChild(group);
       }
-
-      const confirmBtn = document.createElement('button');
-      confirmBtn.textContent = 'Submit Volumes';
-      confirmBtn.onclick = showResults;
-      container.appendChild(confirmBtn);
     }
 
-    function showResults() {
-      const num = parseInt(document.getElementById('inputNumber').value);
-      let coords = [];
-      let summary = "<ul>";
+    function calculateIsocenter() {
+      const num = parseInt(document.getElementById("inputNumber").value);
+      if (isNaN(num) || num <= 0) {
+        document.getElementById("result").innerText = "Invalid number of volumes.";
+        return;
+      }
 
+      let sumX = 0, sumY = 0, sumZ = 0;
       for (let i = 1; i <= num; i++) {
         const x = parseFloat(document.getElementById(`x${i}`).value);
         const y = parseFloat(document.getElementById(`y${i}`).value);
         const z = parseFloat(document.getElementById(`z${i}`).value);
-        const r = parseFloat(document.getElementById(`r${i}`).value);
 
-        coords.push([x, y, z]);
-        summary += `<li>Target ${i}: (X=${x}, Y=${y}, Z=${z}), Radius=${r} mm</li>`;
+        if (isNaN(x) || isNaN(y) || isNaN(z)) {
+          document.getElementById("result").innerText = `Please enter valid coordinates for volume ${i}.`;
+          return;
+        }
+
+        sumX += x;
+        sumY += y;
+        sumZ += z;
       }
 
-      // Tính toạ độ isocenter trung bình dùng math.js
-      const matrix = math.matrix(coords);
-      const centroid = math.mean(matrix, 0); // trung bình theo cột
+      const isoX = (sumX / num).toFixed(2);
+      const isoY = (sumY / num).toFixed(2);
+      const isoZ = (sumZ / num).toFixed(2);
 
-      const isoX = centroid.get([0]).toFixed(2);
-      const isoY = centroid.get([1]).toFixed(2);
-      const isoZ = centroid.get([2]).toFixed(2);
-
-      // Tính góc collimator giả định
-      const angle = math.atan2(isoY, isoX) * 180 / Math.PI;
-
-      summary += "</ul>";
-      summary += `<p><strong>Isocenter:</strong> (${isoX}, ${isoY}, ${isoZ})</p>`;
-      summary += `<p><strong>Suggested Collimator Angle:</strong> ${angle.toFixed(2)}°</p>`;
-
-      document.getElementById('result').innerHTML = summary;
+      document.getElementById("result").innerText = `Isocenter Coordinate: (${isoX}, ${isoY}, ${isoZ})`;
     }
   </script>
 </body>
