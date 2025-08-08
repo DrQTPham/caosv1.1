@@ -1,121 +1,129 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>CAOS</title>
-    <link rel="stylesheet" href="styles.css" />
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-            background-color: #f2f2f2;
-            color: #333;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CAOS-V2</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background-color: #f9f9f9;
+      color: #333;
+    }
 
-        .header {
-            background-color: #007ACC;
-            color: white;
-            padding: 20px;
-            border-radius: 10px;
-            text-align: center;
-            position: relative;
-        }
+    .header {
+      background-color: #007ACC;
+      color: white;
+      padding: 20px;
+      text-align: center;
+      position: relative;
+    }
 
-        .logo-left,
-        .logo-right {
-            width: 80px;
-            height: auto;
-            position: absolute;
-            top: 20px;
-        }
+    .header img {
+      position: absolute;
+      top: 20px;
+      width: 80px;
+      height: auto;
+    }
 
-        .logo-left {
-            left: 20px;
-        }
+    .header .logo-left {
+      left: 20px;
+    }
 
-        .logo-right {
-            right: 20px;
-        }
+    .header .logo-right {
+      right: 20px;
+    }
 
-        .header h1 {
-            margin: 10px 0;
-            font-size: 24px;
-        }
+    .header h1 {
+      margin: 10px 0;
+      font-size: 24px;
+    }
 
-        .content {
-            margin-top: 30px;
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
+    .main {
+      display: flex;
+      justify-content: space-around;
+      align-items: flex-start;
+      padding: 40px 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
 
-        .content h2 {
-            margin-bottom: 15px;
-        }
+    .left, .right {
+      width: 45%;
+      background-color: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
 
-        input[type="number"] {
-            padding: 10px;
-            width: 100%;
-            font-size: 16px;
-            margin-bottom: 20px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
+    .left h2, .right h2 {
+      margin-bottom: 15px;
+    }
 
-        button {
-            padding: 10px 20px;
-            font-size: 16px;
-            background-color: #007ACC;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
+    input[type="number"] {
+      padding: 10px;
+      width: 100%;
+      font-size: 16px;
+      margin-bottom: 20px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
 
-        button:hover {
-            background-color: #005f99;
-        }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #007ACC;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
 
-        #result {
-            margin-top: 20px;
-            font-weight: bold;
-            color: #007ACC;
-        }
-    </style>
+    button:hover {
+      background-color: #005f99;
+    }
+
+    #result {
+      font-weight: bold;
+      color: #007ACC;
+      font-size: 18px;
+    }
+  </style>
 </head>
 <body>
-    <div class="header">
-        <!-- Logo trái: BV108 -->
-        <img src="https://upload.wikimedia.org/wikipedia/commons/3/30/Logo_Benhvien_108.png" alt="Logo 108" class="logo-left" />
-        
-        <!-- Logo phải: HUST -->
-        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d2/HUST_Logo.png/600px-HUST_Logo.png" alt="Logo HUST" class="logo-right" />
-        
-        <h1>Collimator Angle Optimization of SRS - Version 2.0</h1>
-        <h1>Authors: Quang Trung PHẠM & Tien Manh PHAN</h1>
+
+  <div class="header">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/3/30/Logo_Benhvien_108.png" alt="Logo 108" class="logo-left" />
+    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d2/HUST_Logo.png/600px-HUST_Logo.png" alt="Logo HUST" class="logo-right" />
+    <h1>Collimator Angle Optimization of SRS - Version 2.0</h1>
+    <h1>Authors: Quang Trung PHẠM & Tien Manh PHAN</h1>
+  </div>
+
+  <div class="main">
+    <div class="left">
+      <h2>Enter number of target volumes</h2>
+      <input type="number" id="inputNumber" placeholder="Enter a natural number">
+      <button onclick="calculate()">Start</button>
     </div>
 
-    <div class="content">
-        <h2>Enter the number of target volumes</h2>
-        <input type="number" id="inputNumber" placeholder="Enter a natural number">
-        <button onclick="calculate()">Start</button>
-        <div id="result"></div>
-        <div class="container"></div>
+    <div class="right">
+      <h2>Result</h2>
+      <div id="result">...</div>
     </div>
+  </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/12.4.1/math.js" crossorigin="anonymous"></script>
-    <script src="script.js"></script>
+  <script>
+    function calculate() {
+      const num = document.getElementById('inputNumber').value;
+      const result = document.getElementById('result');
+
+      if (!num || isNaN(num) || num < 1) {
+        result.textContent = '⚠️ Please enter a valid natural number.';
+      } else {
+        result.textContent = `✅ You entered: ${num} target volume(s).`;
+      }
+    }
+  </script>
 </body>
 </html>
-
-
-
-
-
-
