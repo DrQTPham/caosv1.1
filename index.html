@@ -1,121 +1,122 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CAOS-V2</title>
-    <link rel="stylesheet" href="styles.css">
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            background-color: #f2f2f2;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CAOS-V2</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      background-color: #f2f2f2;
+    }
 
-        .header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 20px;
-        }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
 
-        .header img {
-            height: 70px;
-        }
+    .header img {
+      height: 70px;
+    }
 
-        .title-block {
-            flex-grow: 1;
-            text-align: center;
-        }
+    .title-block {
+      text-align: center;
+      flex-grow: 1;
+    }
 
-        .title-block h1 {
-            margin: 5px 0;
-            font-size: 20px;
-        }
+    .title-block h1 {
+      font-size: 20px;
+      margin: 5px 0;
+      color: #003366;
+    }
 
-        .main-container {
-            display: flex;
-            justify-content: space-between;
-            gap: 20px;
-        }
+    .main-container {
+      display: flex;
+      gap: 20px;
+    }
 
-        .input-section, .result-section {
-            flex: 1;
-            padding: 20px;
-            background-color: #ffffff;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
+    .input-section,
+    .result-section {
+      flex: 1;
+      background-color: #ffffff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
 
-        .input-section h1,
-        .result-section h1 {
-            font-size: 18px;
-            margin-bottom: 10px;
-        }
+    .input-section h1,
+    .result-section h1 {
+      font-size: 18px;
+      margin-bottom: 10px;
+      color: #003366;
+    }
 
-        input[type="number"] {
-            padding: 10px;
-            font-size: 16px;
-            width: 100%;
-            margin-top: 5px;
-            margin-bottom: 15px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
+    input[type="number"] {
+      padding: 10px;
+      font-size: 16px;
+      width: 100%;
+      margin-top: 5px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
 
-        button {
-            padding: 10px 20px;
-            font-size: 16px;
-            background-color: #003366;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #003366;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
 
-        button:hover {
-            background-color: #005599;
-        }
+    button:hover {
+      background-color: #005599;
+    }
 
-        #result {
-            margin-top: 15px;
-            color: #003366;
-            white-space: pre-line;
-        }
-    </style>
+    #result {
+      margin-top: 15px;
+      white-space: pre-line;
+      color: #003366;
+    }
+  </style>
 </head>
 <body>
 
-    <!-- Logo và tiêu đề -->
-    <div class="header">
-        <img src="logo108.png" alt="Logo 108">
-        <div class="title-block">
-            <h1>Collimator Angle Optimization of SRS - Version 2.0</h1>
-            <h1>Authors: Quang Trung PHẠM (qtphamhus@gmail.com) and Tien Manh PHAN</h1>
-        </div>
-        <img src="logohust.png" alt="Logo HUST">
+  <!-- Logo + Tiêu đề -->
+  <div class="header">
+    <img src="logo108.png" alt="Logo 108" />
+    <div class="title-block">
+      <h1>Collimator Angle Optimization of SRS - Version 2.0</h1>
+      <h1>Authors: Quang Trung PHẠM (qtphamhus@gmail.com) and Tien Manh PHAN</h1>
+    </div>
+    <img src="logohust.png" alt="Logo HUST" />
+  </div>
+
+  <!-- Nội dung chính chia 2 bên -->
+  <div class="main-container">
+    <!-- Bên trái: Nhập dữ liệu -->
+    <div class="input-section">
+      <h1>Enter the number of target volumes:</h1>
+      <input type="number" id="inputNumber" placeholder="Enter a natural number" />
+      <button onclick="calculate()">Start</button>
+      <div class="container"></div>
     </div>
 
-    <!-- Khối nội dung chia 2 bên -->
-    <div class="main-container">
-        <!-- Bên trái: Nhập số liệu -->
-        <div class="input-section">
-            <h1>Enter the number of target volumes:</h1>
-            <input type="number" id="inputNumber" placeholder="Enter a natural number">
-            <button onclick="calculate()">Start</button>
-            <div class="container"></div>
-        </div>
-
-        <!-- Bên phải: Kết quả tính toán -->
-        <div class="result-section">
-            <h1>Isocenter Coordinate and Optimization</h1>
-            <div id="result"></div>
-        </div>
+    <!-- Bên phải: Hiển thị kết quả -->
+    <div class="result-section">
+      <h1>Isocenter Coordinate and Optimization</h1>
+      <div id="result"></div>
     </div>
+  </div>
 
-    <!-- Script -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/12.4.1/math.js" integrity="sha512-B2caA1wJW/b3Jhbhbb9waDjQ7NdG30fkULe9CgCzilQ8CUEdh2NdyGi/GrB+0kQdgfBbUdiLyAP2xdcDzNA6Ow==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="script.js"></script>
-
+  <!-- Script -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/12.4.1/math.js" integrity="sha512-B2caA1wJW/b3Jhbhbb9waDjQ7NdG30fkULe9CgCzilQ8CUEdh2NdyGi/GrB+0kQdgfBbUdiLyAP2xdcDzNA6Ow==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="script.js"></script>
 </body>
 </html>
