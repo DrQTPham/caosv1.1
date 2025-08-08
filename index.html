@@ -61,11 +61,10 @@
       margin-bottom: 15px;
     }
 
-    input[type="number"] {
-      padding: 10px;
-      width: 100%;
-      font-size: 16px;
-      margin-bottom: 20px;
+    input[type="number"], input[type="text"] {
+      padding: 8px;
+      width: 90%;
+      margin-bottom: 10px;
       border: 1px solid #ccc;
       border-radius: 5px;
     }
@@ -89,6 +88,23 @@
       color: #007ACC;
       font-size: 18px;
     }
+
+    .volume-inputs {
+      margin-top: 20px;
+    }
+
+    .volume-group {
+      border: 1px solid #ccc;
+      padding: 10px;
+      margin-bottom: 15px;
+      border-radius: 5px;
+    }
+
+    .volume-group h3 {
+      margin: 0 0 10px 0;
+      font-size: 16px;
+      color: #333;
+    }
   </style>
 </head>
 <body>
@@ -103,8 +119,10 @@
   <div class="main">
     <div class="left">
       <h2>Enter number of target volumes</h2>
-      <input type="number" id="inputNumber" placeholder="Enter a natural number">
-      <button onclick="calculate()">Start</button>
+      <input type="number" id="inputNumber" placeholder="e.g. 3">
+      <button onclick="generateInputs()">Start</button>
+
+      <div class="volume-inputs" id="volumeInputs"></div>
     </div>
 
     <div class="right">
@@ -114,15 +132,55 @@
   </div>
 
   <script>
-    function calculate() {
-      const num = document.getElementById('inputNumber').value;
+    function generateInputs() {
+      const num = parseInt(document.getElementById('inputNumber').value);
+      const container = document.getElementById('volumeInputs');
       const result = document.getElementById('result');
 
+      container.innerHTML = ''; // Clear old inputs
+      result.innerHTML = '...';
+
       if (!num || isNaN(num) || num < 1) {
-        result.textContent = '⚠️ Please enter a valid natural number.';
-      } else {
-        result.textContent = `✅ You entered: ${num} target volume(s).`;
+        container.innerHTML = '<p style="color:red;">⚠️ Please enter a valid natural number (≥1)</p>';
+        return;
       }
+
+      for (let i = 1; i <= num; i++) {
+        const group = document.createElement('div');
+        group.className = 'volume-group';
+        group.innerHTML = `
+          <h3>Target Volume ${i}</h3>
+          <input type="text" placeholder="Volume Name" id="name${i}"><br>
+          <input type="number" placeholder="X Coordinate" id="x${i}">
+          <input type="number" placeholder="Y Coordinate" id="y${i}">
+          <input type="number" placeholder="Z Coordinate" id="z${i}"><br>
+          <input type="number" placeholder="Radius (mm)" id="r${i}">
+        `;
+        container.appendChild(group);
+      }
+
+      const confirmBtn = document.createElement('button');
+      confirmBtn.textContent = 'Submit Volumes';
+      confirmBtn.onclick = showResults;
+      container.appendChild(confirmBtn);
+    }
+
+    function showResults() {
+      const num = parseInt(document.getElementById('inputNumber').value);
+      let summary = "<ul>";
+
+      for (let i = 1; i <= num; i++) {
+        const name = document.getElementById(`name${i}`).value || `Volume ${i}`;
+        const x = document.getElementById(`x${i}`).value;
+        const y = document.getElementById(`y${i}`).value;
+        const z = document.getElementById(`z${i}`).value;
+        const r = document.getElementById(`r${i}`).value;
+
+        summary += `<li><strong>${name}</strong>: (X=${x}, Y=${y}, Z=${z}), Radius=${r} mm</li>`;
+      }
+
+      summary += "</ul>";
+      document.getElementById('result').innerHTML = summary;
     }
   </script>
 </body>
