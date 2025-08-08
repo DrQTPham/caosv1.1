@@ -1,100 +1,67 @@
 body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #f0f4f8;
-  color: #333;
-  margin: 0;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: #f9f9f9;
 }
 
 .header {
-  background-color: #007ACC;
-  color: white;
-  padding: 30px 20px;
-  text-align: center;
-  position: relative;
-}
-
-.header img {
-  position: absolute;
-  top: 10px;
-  width: 80px;
-  height: auto;
+    text-align: center;
+    padding: 20px;
+    background-color: #e3f2fd;
+    position: relative;
 }
 
 .logo-left {
-  left: 20px;
+    position: absolute;
+    left: 20px;
+    top: 20px;
+    height: 60px;
 }
 
 .logo-right {
-  right: 20px;
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    height: 60px;
 }
 
-.header h1 {
-  margin: 10px 0;
-  font-size: 26px;
+.main-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 20px;
+    gap: 20px;
 }
 
-.header h2 {
-  margin: 5px 0;
-  font-size: 18px;
-  font-weight: normal;
+.input-section, .result-section {
+    width: 48%;
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 5px rgba(0,0,0,0.1);
 }
 
-.main {
-  display: flex;
-  justify-content: space-between;
-  padding: 30px;
-  max-width: 1200px;
-  margin: auto;
-  gap: 30px;
-}
-
-.left, .right {
-  width: 48%;
-  background-color: white;
-  padding: 30px;
-  border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.1);
-}
-
-h2 {
-  margin-bottom: 15px;
-}
-
-input[type="number"], input[type="text"] {
-  width: 100%;
-  padding: 10px;
-  margin-bottom: 15px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  font-size: 16px;
+input[type="number"] {
+    padding: 5px;
+    margin: 5px 0 10px;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 button {
-  padding: 10px 20px;
-  background-color: #007ACC;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  margin-bottom: 20px;
-  font-size: 16px;
-  transition: background-color 0.3s ease;
+    padding: 10px 20px;
+    background-color: #2196f3;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
 }
 
 button:hover {
-  background-color: #005f99;
+    background-color: #1976d2;
 }
 
-#result {
-  font-weight: bold;
-  font-size: 18px;
-  color: #007ACC;
-}
-
-.volume-group {
-  margin-bottom: 20px;
-  padding: 15px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  background-color: #fdfdfd;
+hr {
+    margin: 10px 0;
 }
