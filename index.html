@@ -1,38 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CAOS-V2</title>
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="header">
-        <img src="logo108.png" alt="Logo 108" class="logo-left" />
-        <img src="logohust.png" alt="Logo HUST" class="logo-right" />
+    <div class="container-all">
         <h1>Collimator Angle Optimization of SRS Version 2.0</h1>
-        <h2>Authors: Quang Trung PHẠM & Tien Manh PHAN</h2>
-    </div>
+        <h2>Authors: Quang Trung PHẠM (qtphamhus@gmail.com) and Tien Manh PHAN</h2>
 
-    <div class="main-container">
-        <!-- Left Side: Input Section -->
         <div class="input-section">
-            <h3>Enter the number of target volumes:</h3>
-            <input type="number" id="inputNumber" placeholder="e.g., 3" min="1" />
+            <label for="inputNumber">Enter the number of target volumes:</label>
+            <input type="number" id="inputNumber" placeholder="e.g. 3">
             <button onclick="calculate()">Start</button>
+        </div>
+
+        <div class="form-container">
             <div class="container"></div>
         </div>
 
-        <!-- Right Side: Result Section -->
-        <div class="result-section">
-            <div id="result">
-                <!-- Will show isocenter coordinates and optimal angle here -->
-            </div>
+        <div id="loading" class="loading" style="display: none;">
+            <div class="spinner"></div>
+            <p>Calculating optimal collimator angle...</p>
         </div>
+
+        <div class="result-section" id="result"></div>
     </div>
 
-    <!-- JS Libraries -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/12.4.1/math.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/12.4.1/math.js" integrity="sha512-B2caA1wJW/b3Jhbhbb9waDjQ7NdG30fkULe9CgCzilQ8CUEdh2NdyGi/GrB+0kQdgfBbUdiLyAP2xdcDzNA6Ow==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="script.js"></script>
 </body>
 </html>
