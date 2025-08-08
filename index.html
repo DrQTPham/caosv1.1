@@ -4,192 +4,80 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>CAOS-V2</title>
+  <link rel="stylesheet" href="styles.css" />
   <style>
     body {
       font-family: Arial, sans-serif;
       margin: 0;
-      background-color: #f9f9f9;
-      color: #333;
+      padding: 0;
     }
 
     .header {
-      background-color: #007ACC;
-      color: white;
-      padding: 20px;
       text-align: center;
-      position: relative;
-    }
-
-    .header img {
-      position: absolute;
-      top: 20px;
-      width: 80px;
-      height: auto;
-    }
-
-    .logo-left {
-      left: 20px;
-    }
-
-    .logo-right {
-      right: 20px;
+      background-color: #f0f0f0;
+      padding: 20px 10px;
     }
 
     .header h1 {
-      margin: 10px 0;
-      font-size: 24px;
+      margin: 5px 0;
     }
 
     .main {
       display: flex;
-      justify-content: space-around;
-      align-items: flex-start;
-      padding: 40px 20px;
-      max-width: 1200px;
-      margin: 0 auto;
+      justify-content: space-between;
+      padding: 20px;
     }
 
-    .left, .right {
-      width: 45%;
-      background-color: white;
-      padding: 30px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    .left-panel, .right-panel {
+      width: 48%;
     }
 
-    .left h2, .right h2 {
-      margin-bottom: 15px;
-    }
-
-    input[type="number"] {
-      padding: 8px;
-      width: 90%;
-      margin-bottom: 10px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
+    .left-panel input[type="number"] {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      font-size: 1rem;
     }
 
     button {
       padding: 10px 20px;
-      font-size: 16px;
-      background-color: #007ACC;
-      color: white;
-      border: none;
-      border-radius: 5px;
+      font-size: 1rem;
       cursor: pointer;
     }
 
-    button:hover {
-      background-color: #005f99;
-    }
-
-    #result {
-      font-weight: bold;
-      color: #007ACC;
-      font-size: 18px;
-    }
-
-    .volume-group {
-      border: 1px solid #ccc;
+    .result {
+      background-color: #e8f0fe;
       padding: 10px;
-      margin-bottom: 15px;
-      border-radius: 5px;
-    }
-
-    .volume-group h3 {
-      margin: 0 0 10px 0;
-      font-size: 16px;
-      color: #333;
+      margin-top: 20px;
+      min-height: 100px;
     }
   </style>
 </head>
 <body>
 
   <div class="header">
-    <img src="logo108.png" alt="Logo 108" class="logo-left" />
-    <img src="logohust.png" alt="Logo HUST" class="logo-right" />
     <h1>Collimator Angle Optimization of SRS - Version 2.0</h1>
-    <h1>Authors: Quang Trung PHẠM & Tien Manh PHAN</h1>
+    <h1>Authors: Quang Trung PHẠM (qtphamhus@gmail.com) and Tien Manh PHAN</h1>
   </div>
 
   <div class="main">
-    <div class="left">
-      <h2>Enter number of lesions</h2>
-      <input type="number" id="inputNumber" placeholder="e.g. 3">
-      <button onclick="generateInputs()">Start</button>
-
-      <div id="volumeInputs"></div>
+    <!-- Left: Input -->
+    <div class="left-panel">
+      <h2>Enter the number of target volumes:</h2>
+      <input type="number" id="inputNumber" placeholder="Enter a natural number" min="1"/>
+      <button onclick="calculate()">Start</button>
     </div>
 
-    <div class="right">
+    <!-- Right: Result -->
+    <div class="right-panel">
       <h2>Result</h2>
-      <div id="result">...</div>
+      <div id="result" class="result"></div>
     </div>
   </div>
 
-  <script>
-    function generateInputs() {
-      const num = parseInt(document.getElementById('inputNumber').value);
-      const container = document.getElementById('volumeInputs');
-      const result = document.getElementById('result');
-
-      container.innerHTML = '';
-      result.innerHTML = '...';
-
-      if (!num || isNaN(num) || num < 1) {
-        container.innerHTML = '<p style="color:red;">⚠️ Please enter a valid number ≥ 1</p>';
-        return;
-      }
-
-      for (let i = 1; i <= num; i++) {
-        const group = document.createElement('div');
-        group.className = 'volume-group';
-        group.innerHTML = `
-          <h3>Lesion ${i}</h3>
-          <input type="number" placeholder="Volume (mm³)" id="v${i}"><br>
-          <input type="number" placeholder="X Coordinate (mm)" id="x${i}">
-          <input type="number" placeholder="Y Coordinate (mm)" id="y${i}">
-          <input type="number" placeholder="Z Coordinate (mm)" id="z${i}">
-        `;
-        container.appendChild(group);
-      }
-
-      const confirmBtn = document.createElement('button');
-      confirmBtn.textContent = 'Submit Data';
-      confirmBtn.onclick = showResults;
-      container.appendChild(confirmBtn);
-    }
-
-    function showResults() {
-      const num = parseInt(document.getElementById('inputNumber').value);
-      let sumX = 0, sumY = 0, sumZ = 0;
-      let summary = "<ul>";
-
-      for (let i = 1; i <= num; i++) {
-        const v = parseFloat(document.getElementById(`v${i}`).value) || 0;
-        const x = parseFloat(document.getElementById(`x${i}`).value) || 0;
-        const y = parseFloat(document.getElementById(`y${i}`).value) || 0;
-        const z = parseFloat(document.getElementById(`z${i}`).value) || 0;
-
-        sumX += x;
-        sumY += y;
-        sumZ += z;
-
-        summary += `<li>Lesion ${i}: Volume = ${v} mm³, Coordinates = (X=${x}, Y=${y}, Z=${z})</li>`;
-      }
-
-      const isoX = (sumX / num).toFixed(2);
-      const isoY = (sumY / num).toFixed(2);
-      const isoZ = (sumZ / num).toFixed(2);
-
-      // Dummy collimator angle formula (replace with real calculation if needed)
-      const angle = Math.floor((Math.atan2(sumY, sumX) * 180 / Math.PI + 360) % 360);
-
-      summary += `</ul><p><strong>Isocenter:</strong> (X=${isoX}, Y=${isoY}, Z=${isoZ})</p>`;
-      summary += `<p><strong>Optimal Collimator Angle:</strong> ${angle}°</p>`;
-
-      document.getElementById('result').innerHTML = summary;
-    }
-  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/12.4.1/math.js"
+          integrity="sha512-B2caA1wJW/b3Jhbhbb9waDjQ7NdG30fkULe9CgCzilQ8CUEdh2NdyGi/GrB+0kQdgfBbUdiLyAP2xdcDzNA6Ow=="
+          crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="script.js"></script>
 </body>
 </html>
