@@ -17,7 +17,12 @@ function calculate() {
 
 function addInputFields(count) {
     const container = document.querySelector(".container");
+    const result = document.getElementById("result");
+    const loadingDiv = document.getElementById("loading");
+
     container.innerHTML = "";
+    result.innerHTML = "";
+    loadingDiv.style.display = 'none';
 
     const h2 = document.createElement("h2");
     h2.innerHTML = "Please enter details for the target volumes: <br>(Volume: V; Coordinate: x, y, z)";
@@ -83,6 +88,7 @@ function computeIsocenterAndVolume() {
 
 function optimizeCollimator(inputContainers) {
     const container = document.querySelector(".container");
+    const loadingDiv = document.getElementById("loading");
 
     function rotationMatrix(axis, angle) {
         const rad = angle * Math.PI / 180;
@@ -144,15 +150,20 @@ function optimizeCollimator(inputContainers) {
         return bestAngle;
     }
 
-    const anglesToTest = [0, 335, 310, 285, 25, 50, 75];
-    const output = document.createElement("div");
-    output.classList.add("collimator-results");
-    output.innerHTML = "<h3>Optimized Collimator Angles:</h3>";
-    anglesToTest.forEach(t => {
-        const angle = computeAngle(t);
-        output.innerHTML += `Couch: ${t}°, Optimal Collimator Angle: ${angle}°<br>`;
-    });
-    container.appendChild(output);
+    loadingDiv.style.display = 'block';
+
+    setTimeout(() => {
+        const anglesToTest = [0, 335, 310, 285, 25, 50, 75];
+        const output = document.createElement("div");
+        output.classList.add("collimator-results");
+        output.innerHTML = "<h3>Optimized Collimator Angles:</h3>";
+        anglesToTest.forEach(t => {
+            const angle = computeAngle(t);
+            output.innerHTML += `Couch: ${t}°, Optimal Collimator Angle: ${angle}°<br>`;
+        });
+        container.appendChild(output);
+        loadingDiv.style.display = 'none';
+    }, 500);
 }
 
 // UI protection
