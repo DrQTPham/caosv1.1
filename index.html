@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CAOS-V2 — Collimator Angle Optimization</title>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+    :root {
+      --primary:#1a5fa8; --primary-l:#e8f0fb; --primary-d:#134a85;
+      --accent:#0e9e6e;  --accent-l:#e6f7f2;
+      --warn:#d4600a;    --warn-l:#fff3e8;
+      --bg:#f5f7fa; --surface:#ffffff; --surface2:#f0f4f8;
+      --border:#dde3ec; --text:#1a2133; --text2:#4a5568; --text3:#8896aa;
+      --r:10px;
+    }
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-size:14px;line-height:1.6;}
+
+    /* Header */
+    header{
+      background:linear-gradient(135deg,#1a5fa8,#0d3d72);
+      color:white; padding:14px 24px;
+      display:flex; align-items:center; gap:14px;
+      box-shadow:0 2px 12px rgba(0,0,0,0.15);
+    }
+    header img{height:40px;}
+    .header-title{flex:1;}
+    .header-title h1{font-size:1.05rem;font-weight:600;}
+    .header-title p{font-size:0.72rem;opacity:0.75;}
+    .user-info{text-align:right;font-size:0.75rem;opacity:0.85;}
+    .btn-logout{
+      padding:6px 14px;background:rgba(255,255,255,0.15);
+      border:1px solid rgba(255,255,255,0.3);border-radius:6px;
+      color:white;cursor:pointer;font-size:0.75rem;
+      transition:background .15s; margin-left:12px;
+    }
+    .btn-logout:hover{background:rgba(255,255,255,0.25);}
+
+    /* Main */
+    main{max-width:800px;margin:24px auto;padding:0 16px 60px;}
+
+    /* Cards */
+    .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);box-shadow:0 1px 4px rgba(0,0,0,0.06);margin-bottom:16px;}
+    .card-header{padding:14px 18px 10px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;}
+    .card-header h2{font-size:0.92rem;font-weight:600;}
+    .card-body{padding:16px 18px;}
+
+    /* Fields */
+    .field{display:flex;flex-direction:column;gap:4px;margin-bottom:10px;}
+    .field label{font-size:0.75rem;font-weight:500;color:var(--text2);}
+    .field input{
+      padding:8px 10px;border:1px solid var(--border);border-radius:7px;
+      font-family:inherit;font-size:0.88rem;color:var(--text);
+      transition:border-color .15s,box-shadow .15s;
+    }
+    .field input:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px rgba(26,95,168,0.12);}
+
+    .grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+    @media(max-width:540px){.grid4{grid-template-columns:1fr 1fr;}}
+
+    /* Target form */
+    .target-block{
+      background:var(--surface2);border:1px solid var(--border);
+      border-radius:8px;padding:14px;margin-bottom:10px;
+      position:relative;
+    }
+    .target-label{
+      font-size:0.72rem;font-weight:600;color:var(--primary);
+      text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px;
+    }
+    .btn-remove{
+      position:absolute;top:10px;right:10px;
+      background:none;border:none;color:var(--text3);cursor:pointer;
+      font-size:1rem;line-height:1;padding:2px 6px;border-radius:4px;
+    }
+    .btn-remove:hover{background:#fdecea;color:#c0392b;}
+
+    /* Buttons */
+    .btn{
+      padding:9px 18px;border:none;border-radius:7px;cursor:pointer;
+      font-family:inherit;font-size:0.85rem;font-weight:500;
+      display:inline-flex;align-items:center;gap:6px;
+      transition:background .15s,transform .1s;
+    }
+    .btn:active{transform:scale(0.97);}
+    .btn-primary{background:var(--primary);color:white;}
+    .btn-primary:hover{background:var(--primary-d);}
+    .btn-accent{background:var(--accent);color:white;}
+    .btn-accent:hover{background:#0a8a5e;}
+    .btn-outline{background:transparent;color:var(--primary);border:1px solid var(--primary);}
+    .btn-outline:hover{background:var(--primary-l);}
+    .btn:disabled{opacity:0.5;cursor:not-allowed;}
+    .btn-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;}
+
+    /* Loading */
+    .loading-bar{
+      height:3px;background:var(--primary-l);border-radius:2px;
+      overflow:hidden;margin:12px 0;display:none;
+    }
+    .loading-bar-inner{
+      height:100%;width:30%;background:var(--primary);
+      border-radius:2px;animation:slide 1.2s ease-in-out infinite;
+    }
+    @keyframes slide{0%{margin-left:-30%}100%{margin-left:100%}}
+
+    /* Results */
+    .result-card{
+      border-radius:8px;padding:14px 16px;margin-bottom:10px;
+      border-left:4px solid;
+    }
+    .result-card.gold{background:#fffbea;border-color:#f59e0b;}
+    .result-card.blue{background:var(--primary-l);border-color:var(--primary);}
+    .result-card.green{background:var(--accent-l);border-color:var(--accent);}
+
+    .result-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid rgba(0,0,0,0.06);}
+    .result-row:last-child{border-bottom:none;}
+    .result-row .lbl{font-size:0.8rem;color:var(--text2);}
+    .result-row .val{font-family:'JetBrains Mono',monospace;font-size:0.88rem;font-weight:500;color:var(--primary);}
+    .result-row .val.best{color:#b45309;font-weight:700;}
+
+    .rank-badge{
+      display:inline-flex;align-items:center;justify-content:center;
+      width:24px;height:24px;border-radius:50%;font-size:0.72rem;font-weight:700;
+      margin-right:8px;flex-shrink:0;
+    }
+    .rank-1{background:#f59e0b;color:white;}
+    .rank-2{background:#94a3b8;color:white;}
+    .rank-3{background:#cd7c3a;color:white;}
+    .rank-n{background:var(--surface2);color:var(--text3);}
+
+    .isocenter-box{
+      background:var(--primary-l);border:1px solid #b8d0f0;
+      border-radius:8px;padding:12px 16px;margin-bottom:14px;
+      display:grid;grid-template-columns:repeat(3,1fr);gap:10px;text-align:center;
+    }
+    .iso-val{font-family:'JetBrains Mono',monospace;font-size:1.1rem;font-weight:500;color:var(--primary);}
+    .iso-lbl{font-size:0.7rem;color:var(--text3);margin-top:2px;}
+
+    .callout{border-radius:8px;padding:10px 13px;font-size:0.78rem;color:var(--text2);display:flex;gap:8px;align-items:flex-start;}
+    .callout.warn{background:var(--warn-l);border-left:3px solid var(--warn);}
+    .callout.info{background:var(--primary-l);border-left:3px solid var(--primary);}
+
+    /* Step indicator */
+    .steps{display:flex;gap:0;margin-bottom:20px;}
+    .step{
+      flex:1;text-align:center;padding:10px;
+      font-size:0.72rem;font-weight:500;color:var(--text3);
+      border-bottom:2px solid var(--border);
+      transition:all .2s;
+    }
+    .step.active{color:var(--primary);border-bottom-color:var(--primary);}
+    .step.done{color:var(--accent);border-bottom-color:var(--accent);}
+    .step-num{
+      display:inline-flex;align-items:center;justify-content:center;
+      width:20px;height:20px;border-radius:50%;
+      background:var(--surface2);color:var(--text3);
+      font-size:0.7rem;font-weight:700;margin-right:5px;
+    }
+    .step.active .step-num{background:var(--primary);color:white;}
+    .step.done .step-num{background:var(--accent);color:white;}
+  </style>
+</head>
+<body>
+
+<header>
+  <img src="logo108.png" alt="108">
+  <div class="header-title">
+    <h1>CAOS-V2 — Collimator Angle Optimization for SRS</h1>
+    <p>TS. Phạm Quang Trung & CN Phan Tiến Mạnh · BV Trung ương Quân đội 108</p>
+  </div>
+  <div class="user-info">
+    <span id="userEmail">—</span>
+    <button class="btn-logout" onclick="logout()">Đăng xuất</button>
+  </div>
+</header>
+
+<main>
+
+  <!-- Step indicator -->
+  <div class="steps">
+    <div class="step active" id="step1"><span class="step-num">1</span>Nhập Target</div>
+    <div class="step" id="step2"><span class="step-num">2</span>Isocenter</div>
+    <div class="step" id="step3"><span class="step-num">3</span>Tối ưu Collimator</div>
+  </div>
+
+  <!-- STEP 1: Nhập số target -->
+  <div id="panel1">
+    <div class="card">
+      <div class="card-header">⚙️ <h2>Bước 1 — Số lượng thể tích mục tiêu</h2></div>
+      <div class="card-body">
+        <div class="callout info" style="margin-bottom:14px">
+          <span>ℹ️</span>
+          <span>Nhập thể tích V (cm³) và tọa độ x, y, z (cm) của từng target PTV trong hệ tọa độ máy.</span>
+        </div>
+        <div class="field">
+          <label>Số target volumes</label>
+          <input type="number" id="numTargets" placeholder="vd: 3" min="1" max="20" style="max-width:160px">
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-primary" onclick="buildTargetForms()">▶ Tiếp tục</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 2: Form targets -->
+  <div id="panel2" style="display:none">
+    <div class="card">
+      <div class="card-header">📐 <h2>Bước 2 — Thông số Target Volumes</h2></div>
+      <div class="card-body">
+        <div id="targetForms"></div>
+        <div class="btn-row">
+          <button class="btn btn-outline" onclick="goStep(1)">◀ Quay lại</button>
+          <button class="btn btn-primary" id="btnIsocenter" onclick="sendComputeIsocenter()">🧮 Tính Isocenter</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 3: Kết quả Isocenter + Optimize -->
+  <div id="panel3" style="display:none">
+
+    <div class="card">
+      <div class="card-header">📍 <h2>Isocenter & Thông số Target</h2></div>
+      <div class="card-body">
+        <div id="isocenterResult"></div>
+        <div class="btn-row">
+          <button class="btn btn-outline" onclick="goStep(2)">◀ Sửa Target</button>
+          <button class="btn btn-accent" id="btnOptimize" onclick="sendOptimize()">🎯 Tối ưu Collimator Angle</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="loading-bar" id="loadingBar">
+      <div class="loading-bar-inner"></div>
+    </div>
+
+    <div id="optimizeResult"></div>
+
+  </div>
+
+</main>
+
+<script>
+// ── Firebase Config ───────────────────────────────────────────
+const firebaseConfig = {
+  apiKey:            "AIzaSyDc6A45Nh2tlTO-q3nqHEqTjCHhaLpRBn8",
+  authDomain:        "caos-v1.firebaseapp.com",
+  projectId:         "caos-v1",
+  storageBucket:     "caos-v1.firebasestorage.app",
+  messagingSenderId: "29375976118",
+  appId:             "1:29375976118:web:66696b738010c830814c17"
+};
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+
+// ── Google Apps Script Web App URL (dán URL sau khi deploy) ──
+const API_URL = "https://script.google.com/macros/s/AKfycbymLLgcSiuwUYQCVv_o30xhwlBqn9iIliu0dniQHjxxThetGFanBj6UtVZuF0NVZJ9a4A/exec";
+
+// ── Auth Guard ────────────────────────────────────────────────
+let currentUser = null;
+auth.onAuthStateChanged(user => {
+  if (!user) {
+    window.location.href = "account.html";
+  } else {
+    currentUser = user;
+    document.getElementById('userEmail').textContent = user.email || user.displayName || 'User';
+  }
+});
+
+async function logout() {
+  await auth.signOut();
+  window.location.href = "account.html";
+}
+
+// ── Step navigation ───────────────────────────────────────────
+function goStep(n) {
+  [1,2,3].forEach(i => {
+    document.getElementById('panel'+i).style.display = i===n ? 'block' : 'none';
+    const s = document.getElementById('step'+i);
+    s.className = 'step' + (i<n ? ' done' : i===n ? ' active' : '');
+  });
+}
+
+// ── Build target forms ────────────────────────────────────────
+function buildTargetForms() {
+  const n = parseInt(document.getElementById('numTargets').value);
+  if (isNaN(n) || n < 1) return alert('Nhập số target hợp lệ (≥ 1).');
+
+  const container = document.getElementById('targetForms');
+  container.innerHTML = '';
+
+  for (let i = 0; i < n; i++) {
+    const div = document.createElement('div');
+    div.className = 'target-block';
+    div.innerHTML = `
+      <div class="target-label">Target PTV ${i+1}</div>
+      <div class="grid4">
+        <div class="field">
+          <label>V (cm³)</label>
+          <input type="number" class="tv" placeholder="vd: 4.2" step="0.01" min="0">
+        </div>
+        <div class="field">
+          <label>x (cm)</label>
+          <input type="number" class="tx" placeholder="vd: 1.5" step="0.1">
+        </div>
+        <div class="field">
+          <label>y (cm)</label>
+          <input type="number" class="ty" placeholder="vd: -2.0" step="0.1">
+        </div>
+        <div class="field">
+          <label>z (cm)</label>
+          <input type="number" class="tz" placeholder="vd: 0.8" step="0.1">
+        </div>
+      </div>`;
+    container.appendChild(div);
+  }
+  goStep(2);
+}
+
+// ── Collect target data ───────────────────────────────────────
+function collectTargets() {
+  const blocks = document.querySelectorAll('.target-block');
+  const targets = [];
+  for (const block of blocks) {
+    const V = parseFloat(block.querySelector('.tv').value);
+    const x = parseFloat(block.querySelector('.tx').value);
+    const y = parseFloat(block.querySelector('.ty').value);
+    const z = parseFloat(block.querySelector('.tz').value);
+    if ([V,x,y,z].some(isNaN)) {
+      alert('Vui lòng nhập đầy đủ tất cả các giá trị V, x, y, z.');
+      return null;
+    }
+    targets.push({ V, x, y, z });
+  }
+  return targets;
+}
+
+// ── Gọi API (Apps Script) ─────────────────────────────────────
+// Core engine (protected)
+(function(){var _0x='Ly8gQ0FPUy1WMiBDb3JlIExvZ2ljIChz4bq9IMSRxrDhu6NjIG9iZnVzY2F0ZSB0csaw4bubYyBraGkgZGVwbG95KQoKZnVuY3Rpb24gY29tcHV0ZUlzb2NlbnRlcih0YXJnZXRzKSB7CiAgY29uc3QgeFZhbHMgPSB0YXJnZXRzLm1hcCh0ID0+IHQueCk7CiAgY29uc3QgeVZhbHMgPSB0YXJnZXRzLm1hcCh0ID0+IHQueSk7CiAgY29uc3QgelZhbHMgPSB0YXJnZXRzLm1hcCh0ID0+IHQueik7CiAgcmV0dXJuIHsKICAgIGlzb2NlbnRlcjogewogICAgICB4OiAoTWF0aC5tYXgoLi4ueFZhbHMpICsgTWF0aC5taW4oLi4ueFZhbHMpKSAvIDIsCiAgICAgIHk6IChNYXRoLm1heCguLi55VmFscykgKyBNYXRoLm1pbiguLi55VmFscykpIC8gMiwKICAgICAgejogKE1hdGgubWF4KC4uLnpWYWxzKSArIE1hdGgubWluKC4uLnpWYWxzKSkgLyAyCiAgICB9LAogICAgdGFyZ2V0czogdGFyZ2V0cy5tYXAodCA9PiAoewogICAgICByYWRpdXM6IE1hdGguY2JydCgoMyp0LlYpLyg0Kk1hdGguUEkpKSwKICAgICAgeDogdC54LCB5OiB0LnksIHo6IHQuegogICAgfSkpCiAgfTsKfQoKZnVuY3Rpb24gX3JtKGF4LCBkZWcpIHsKICBjb25zdCByID0gZGVnKk1hdGguUEkvMTgwLCBjPU1hdGguY29zKHIpLCBzPU1hdGguc2luKHIpOwogIHJldHVybiBheD09PSd4Jz9bWzEsMCwwXSxbMCxjLC1zXSxbMCxzLGNdXToKICAgICAgICAgYXg9PT0neSc/W1tjLDAsc10sWzAsMSwwXSxbLXMsMCxjXV06CiAgICAgICAgICAgICAgICAgIFtbYywtcywwXSxbcyxjLDBdLFswLDAsMV1dOwp9CmZ1bmN0aW9uIF9tbShBLEIpe2NvbnN0IFI9W1swLDAsMF0sWzAsMCwwXSxbMCwwLDBdXTtmb3IobGV0IGk9MDtpPDM7aSsrKWZvcihsZXQgaj0wO2o8MztqKyspZm9yKGxldCBrPTA7azwzO2srKylSW2ldW2pdKz1BW2ldW2tdKkJba11bal07cmV0dXJuIFI7fQpmdW5jdGlvbiBfbXYoTSx2KXtyZXR1cm5bTVswXVswXSp2WzBdK01bMF1bMV0qdlsxXStNWzBdWzJdKnZbMl0sTVsxXVswXSp2WzBdK01bMV1bMV0qdlsxXStNWzFdWzJdKnZbMl0sTVsyXVswXSp2WzBdK01bMl1bMV0qdlsxXStNWzJdWzJdKnZbMl1dO30KCmZ1bmN0aW9uIG9wdGltaXplQ29sbGltYXRvcih0YXJnZXRzKSB7CiAgY29uc3QgQ0E9WzAsMzM1LDMxMCwyODUsMjUsNTAsNzVdOwogIGNvbnN0IEdTPTcyOwogIGNvbnN0IHB0PXRhcmdldHMubWFwKHQ9Pih7Y29vcmQ6W3QueCx0LnksdC56XSxyYWRpdXM6TWF0aC5jYnJ0KCgzKnQuVikvKDQqTWF0aC5QSSkpfSkpOwogIGZ1bmN0aW9uIHNjKGMsY291Y2gpewogICAgbGV0IHM9MDtjb25zdCBSYz1fcm0oJ3knLGNvdWNoKTsKICAgIGZvcihsZXQgZz0wO2c8MzYwO2crPTM2MC9HUyl7CiAgICAgIGNvbnN0IFI9X21tKF9ybSgneicsZyksX21tKF9ybSgneCcsYyksUmMpKTsKICAgICAgcHQuZm9yRWFjaCh0PT57Y29uc3Qgcj1fbXYoUix0LmNvb3JkKTtpZihyWzBdLXQucmFkaXVzPDAmJnJbMl0rdC5yYWRpdXM+MClzKys7fSk7CiAgICB9cmV0dXJuIHM7CiAgfQogIGZ1bmN0aW9uIGdzKGNvdWNoKXsKICAgIGNvbnN0IGdyPShNYXRoLnNxcnQoNSktMSkvMjtsZXQgYT0wLGI9MTgwOwogICAgbGV0IGM9Yi1nciooYi1hKSxkPWErZ3IqKGItYSk7CiAgICB3aGlsZShNYXRoLmFicyhiLWEpPjEpe3NjKGMsY291Y2gpPHNjKGQsY291Y2gpP2E9YzpiPWQ7Yz1iLWdyKihiLWEpO2Q9YStnciooYi1hKTt9CiAgICBjb25zdCBiZXN0PU1hdGgucm91bmQoKGErYikvMik7cmV0dXJue2NvbGxpbWF0b3I6YmVzdCxzY29yZTpzYyhiZXN0LGNvdWNoKX07CiAgfQogIHJldHVybiBDQS5tYXAoY291Y2g9Pntjb25zdCBvPWdzKGNvdWNoKTtyZXR1cm57Y291Y2gsY29sbGltYXRvcjpvLmNvbGxpbWF0b3Isc2NvcmU6by5zY29yZX07fSkKICAgICAgICAgICAuc29ydCgoYSxiKT0+Yi5zY29yZS1hLnNjb3JlKTsKfQo=';var _1x=atob(_0x);eval(_1x);})();
+
+async function callAPI(action, data) {
+  // Chạy local sau khi xác thực Firebase
+  await currentUser.getIdToken(true); // verify token vẫn được check
+  if (action === 'computeIsocenter') {
+    return computeIsocenter(data.targets);
+  } else if (action === 'optimizeCollimator') {
+    return optimizeCollimator(data.targets);
+  }
+  throw new Error('Unknown action');
+}
+
+// ── Step 2: Tính Isocenter ────────────────────────────────────
+async function sendComputeIsocenter() {
+  const targets = collectTargets();
+  if (!targets) return;
+
+  const btn = document.getElementById('btnIsocenter');
+  btn.disabled = true; btn.textContent = 'Đang tính...';
+
+  try {
+    const result = await callAPI('computeIsocenter', { targets });
+    renderIsocenter(result);
+    goStep(3);
+  } catch (err) {
+    alert('Lỗi: ' + err.message);
+  } finally {
+    btn.disabled = false; btn.textContent = '🧮 Tính Isocenter';
+  }
+}
+
+function renderIsocenter(result) {
+  const iso = result.isocenter;
+  let html = `
+    <div class="isocenter-box">
+      <div><div class="iso-val">${iso.x.toFixed(2)}</div><div class="iso-lbl">X<sub>iso</sub> (cm)</div></div>
+      <div><div class="iso-val">${iso.y.toFixed(2)}</div><div class="iso-lbl">Y<sub>iso</sub> (cm)</div></div>
+      <div><div class="iso-val">${iso.z.toFixed(2)}</div><div class="iso-lbl">Z<sub>iso</sub> (cm)</div></div>
+    </div>
+    <table style="width:100%;border-collapse:collapse;font-size:0.82rem">
+      <thead><tr>
+        <th style="padding:7px 10px;text-align:left;border-bottom:1px solid var(--border);color:var(--text3)">Target</th>
+        <th style="padding:7px 10px;text-align:right;border-bottom:1px solid var(--border);color:var(--text3)">Radius (cm)</th>
+        <th style="padding:7px 10px;text-align:right;border-bottom:1px solid var(--border);color:var(--text3)">x</th>
+        <th style="padding:7px 10px;text-align:right;border-bottom:1px solid var(--border);color:var(--text3)">y</th>
+        <th style="padding:7px 10px;text-align:right;border-bottom:1px solid var(--border);color:var(--text3)">z</th>
+      </tr></thead><tbody>`;
+
+  result.targets.forEach((t, i) => {
+    html += `<tr>
+      <td style="padding:6px 10px;border-bottom:1px solid var(--border)">PTV ${i+1}</td>
+      <td style="padding:6px 10px;text-align:right;border-bottom:1px solid var(--border);font-family:'JetBrains Mono',monospace">${t.radius.toFixed(3)}</td>
+      <td style="padding:6px 10px;text-align:right;border-bottom:1px solid var(--border);font-family:'JetBrains Mono',monospace">${t.x}</td>
+      <td style="padding:6px 10px;text-align:right;border-bottom:1px solid var(--border);font-family:'JetBrains Mono',monospace">${t.y}</td>
+      <td style="padding:6px 10px;text-align:right;border-bottom:1px solid var(--border);font-family:'JetBrains Mono',monospace">${t.z}</td>
+    </tr>`;
+  });
+  html += '</tbody></table>';
+  document.getElementById('isocenterResult').innerHTML = html;
+}
+
+// ── Step 3: Tối ưu Collimator ─────────────────────────────────
+async function sendOptimize() {
+  const targets = collectTargets();
+  if (!targets) return;
+
+  const btn = document.getElementById('btnOptimize');
+  const bar = document.getElementById('loadingBar');
+  btn.disabled = true; btn.textContent = 'Đang tính...';
+  bar.style.display = 'block';
+  document.getElementById('optimizeResult').innerHTML = '';
+
+  try {
+    const result = await callAPI('optimizeCollimator', { targets });
+    renderOptimize(result);
+  } catch (err) {
+    alert('Lỗi: ' + err.message);
+  } finally {
+    btn.disabled = false; btn.textContent = '🎯 Tối ưu Collimator Angle';
+    bar.style.display = 'none';
+  }
+}
+
+function renderOptimize(results) {
+  const container = document.getElementById('optimizeResult');
+
+  let html = `<div class="card">
+    <div class="card-header">🎯 <h2>Kết quả tối ưu Collimator Angle</h2></div>
+    <div class="card-body">
+      <div class="callout info" style="margin-bottom:14px">
+        <span>💡</span>
+        <span>Kết quả sắp xếp theo điểm số giảm dần. Góc collimator tối ưu nhất ở hàng đầu.</span>
+      </div>`;
+
+  results.forEach((r, i) => {
+    const rankClass = i===0 ? 'rank-1' : i===1 ? 'rank-2' : i===2 ? 'rank-3' : 'rank-n';
+    const cardClass = i===0 ? 'gold' : i===1 ? 'blue' : 'green';
+    const emoji     = i===0 ? '🥇' : i===1 ? '🥈' : i===2 ? '🥉' : '　';
+    html += `
+      <div class="result-card ${cardClass}">
+        <div style="display:flex;align-items:center;margin-bottom:8px">
+          <span class="rank-badge ${rankClass}">${i+1}</span>
+          <strong style="font-size:0.88rem">${emoji} Couch Angle: ${r.couch}°</strong>
+        </div>
+        <div class="result-row">
+          <span class="lbl">Collimator Angle tối ưu</span>
+          <span class="val ${i===0?'best':''}">${r.collimator}°</span>
+        </div>
+        <div class="result-row">
+          <span class="lbl">Điểm số (coverage score)</span>
+          <span class="val">${r.score}</span>
+        </div>
+      </div>`;
+  });
+
+  html += `
+      <div class="callout warn" style="margin-top:12px">
+        <span>⚠️</span>
+        <span>Kết quả là gợi ý tối ưu hóa hình học. Bác sĩ vật lý cần kiểm tra lại trên hệ thống lập kế hoạch trước khi áp dụng lâm sàng.</span>
+      </div>
+    </div></div>`;
+
+  container.innerHTML = html;
+}
+</script>
+</body>
+</html>
