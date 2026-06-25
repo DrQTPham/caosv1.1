@@ -340,8 +340,33 @@ function collectTargets() {
 }
 
 // ── Gọi API (Apps Script) ─────────────────────────────────────
-// Core engine (protected)
-(function(){var _0x='Ly8gQ0FPUy1WMiBDb3JlIExvZ2ljIChz4bq9IMSRxrDhu6NjIG9iZnVzY2F0ZSB0csaw4bubYyBraGkgZGVwbG95KQoKZnVuY3Rpb24gY29tcHV0ZUlzb2NlbnRlcih0YXJnZXRzKSB7CiAgY29uc3QgeFZhbHMgPSB0YXJnZXRzLm1hcCh0ID0+IHQueCk7CiAgY29uc3QgeVZhbHMgPSB0YXJnZXRzLm1hcCh0ID0+IHQueSk7CiAgY29uc3QgelZhbHMgPSB0YXJnZXRzLm1hcCh0ID0+IHQueik7CiAgcmV0dXJuIHsKICAgIGlzb2NlbnRlcjogewogICAgICB4OiAoTWF0aC5tYXgoLi4ueFZhbHMpICsgTWF0aC5taW4oLi4ueFZhbHMpKSAvIDIsCiAgICAgIHk6IChNYXRoLm1heCguLi55VmFscykgKyBNYXRoLm1pbiguLi55VmFscykpIC8gMiwKICAgICAgejogKE1hdGgubWF4KC4uLnpWYWxzKSArIE1hdGgubWluKC4uLnpWYWxzKSkgLyAyCiAgICB9LAogICAgdGFyZ2V0czogdGFyZ2V0cy5tYXAodCA9PiAoewogICAgICByYWRpdXM6IE1hdGguY2JydCgoMyp0LlYpLyg0Kk1hdGguUEkpKSwKICAgICAgeDogdC54LCB5OiB0LnksIHo6IHQuegogICAgfSkpCiAgfTsKfQoKZnVuY3Rpb24gX3JtKGF4LCBkZWcpIHsKICBjb25zdCByID0gZGVnKk1hdGguUEkvMTgwLCBjPU1hdGguY29zKHIpLCBzPU1hdGguc2luKHIpOwogIHJldHVybiBheD09PSd4Jz9bWzEsMCwwXSxbMCxjLC1zXSxbMCxzLGNdXToKICAgICAgICAgYXg9PT0neSc/W1tjLDAsc10sWzAsMSwwXSxbLXMsMCxjXV06CiAgICAgICAgICAgICAgICAgIFtbYywtcywwXSxbcyxjLDBdLFswLDAsMV1dOwp9CmZ1bmN0aW9uIF9tbShBLEIpe2NvbnN0IFI9W1swLDAsMF0sWzAsMCwwXSxbMCwwLDBdXTtmb3IobGV0IGk9MDtpPDM7aSsrKWZvcihsZXQgaj0wO2o8MztqKyspZm9yKGxldCBrPTA7azwzO2srKylSW2ldW2pdKz1BW2ldW2tdKkJba11bal07cmV0dXJuIFI7fQpmdW5jdGlvbiBfbXYoTSx2KXtyZXR1cm5bTVswXVswXSp2WzBdK01bMF1bMV0qdlsxXStNWzBdWzJdKnZbMl0sTVsxXVswXSp2WzBdK01bMV1bMV0qdlsxXStNWzFdWzJdKnZbMl0sTVsyXVswXSp2WzBdK01bMl1bMV0qdlsxXStNWzJdWzJdKnZbMl1dO30KCmZ1bmN0aW9uIG9wdGltaXplQ29sbGltYXRvcih0YXJnZXRzKSB7CiAgY29uc3QgQ0E9WzAsMzM1LDMxMCwyODUsMjUsNTAsNzVdOwogIGNvbnN0IEdTPTcyOwogIGNvbnN0IHB0PXRhcmdldHMubWFwKHQ9Pih7Y29vcmQ6W3QueCx0LnksdC56XSxyYWRpdXM6TWF0aC5jYnJ0KCgzKnQuVikvKDQqTWF0aC5QSSkpfSkpOwogIGZ1bmN0aW9uIHNjKGMsY291Y2gpewogICAgbGV0IHM9MDtjb25zdCBSYz1fcm0oJ3knLGNvdWNoKTsKICAgIGZvcihsZXQgZz0wO2c8MzYwO2crPTM2MC9HUyl7CiAgICAgIGNvbnN0IFI9X21tKF9ybSgneicsZyksX21tKF9ybSgneCcsYyksUmMpKTsKICAgICAgcHQuZm9yRWFjaCh0PT57Y29uc3Qgcj1fbXYoUix0LmNvb3JkKTtpZihyWzBdLXQucmFkaXVzPDAmJnJbMl0rdC5yYWRpdXM+MClzKys7fSk7CiAgICB9cmV0dXJuIHM7CiAgfQogIGZ1bmN0aW9uIGdzKGNvdWNoKXsKICAgIGNvbnN0IGdyPShNYXRoLnNxcnQoNSktMSkvMjtsZXQgYT0wLGI9MTgwOwogICAgbGV0IGM9Yi1nciooYi1hKSxkPWErZ3IqKGItYSk7CiAgICB3aGlsZShNYXRoLmFicyhiLWEpPjEpe3NjKGMsY291Y2gpPHNjKGQsY291Y2gpP2E9YzpiPWQ7Yz1iLWdyKihiLWEpO2Q9YStnciooYi1hKTt9CiAgICBjb25zdCBiZXN0PU1hdGgucm91bmQoKGErYikvMik7cmV0dXJue2NvbGxpbWF0b3I6YmVzdCxzY29yZTpzYyhiZXN0LGNvdWNoKX07CiAgfQogIHJldHVybiBDQS5tYXAoY291Y2g9Pntjb25zdCBvPWdzKGNvdWNoKTtyZXR1cm57Y291Y2gsY29sbGltYXRvcjpvLmNvbGxpbWF0b3Isc2NvcmU6by5zY29yZX07fSkKICAgICAgICAgICAuc29ydCgoYSxiKT0+Yi5zY29yZS1hLnNjb3JlKTsKfQo=';var _1x=atob(_0x);eval(_1x);})();
+// Core engine
+function computeIsocenter(targets) {
+  const xVals = targets.map(t => t.x);
+  const yVals = targets.map(t => t.y);
+  const zVals = targets.map(t => t.z);
+  return {
+    isocenter: {
+      x: (Math.max(...xVals) + Math.min(...xVals)) / 2,
+      y: (Math.max(...yVals) + Math.min(...yVals)) / 2,
+      z: (Math.max(...zVals) + Math.min(...zVals)) / 2
+    },
+    targets: targets.map(t => ({
+      radius: Math.cbrt((3*t.V)/(4*Math.PI)),
+      x: t.x, y: t.y, z: t.z
+    }))
+  };
+}
+function _rm(ax,deg){const r=deg*Math.PI/180,c=Math.cos(r),s=Math.sin(r);return ax==='x'?[[1,0,0],[0,c,-s],[0,s,c]]:ax==='y'?[[c,0,s],[0,1,0],[-s,0,c]]:[[c,-s,0],[s,c,0],[0,0,1]];}
+function _mm(A,B){const R=[[0,0,0],[0,0,0],[0,0,0]];for(let i=0;i<3;i++)for(let j=0;j<3;j++)for(let k=0;k<3;k++)R[i][j]+=A[i][k]*B[k][j];return R;}
+function _mv(M,v){return[M[0][0]*v[0]+M[0][1]*v[1]+M[0][2]*v[2],M[1][0]*v[0]+M[1][1]*v[1]+M[1][2]*v[2],M[2][0]*v[0]+M[2][1]*v[1]+M[2][2]*v[2]];}
+function optimizeCollimator(targets){
+  const CA=[0,335,310,285,25,50,75],GS=72;
+  const pt=targets.map(t=>({coord:[t.x,t.y,t.z],radius:Math.cbrt((3*t.V)/(4*Math.PI))}));
+  function sc(c,couch){let s=0;const Rc=_rm('y',couch);for(let g=0;g<360;g+=360/GS){const R=_mm(_rm('z',g),_mm(_rm('x',c),Rc));pt.forEach(t=>{const r=_mv(R,t.coord);if(r[0]-t.radius<0&&r[2]+t.radius>0)s++;});}return s;}
+  function gs(couch){const gr=(Math.sqrt(5)-1)/2;let a=0,b=180,c=b-gr*(b-a),d=a+gr*(b-a);while(Math.abs(b-a)>1){sc(c,couch)<sc(d,couch)?a=c:b=d;c=b-gr*(b-a);d=a+gr*(b-a);}const best=Math.round((a+b)/2);return{collimator:best,score:sc(best,couch)};}
+  return CA.map(couch=>{const o=gs(couch);return{couch,collimator:o.collimator,score:o.score};}).sort((a,b)=>b.score-a.score);
+}
 
 async function callAPI(action, data) {
   // Chạy local sau khi xác thực Firebase
