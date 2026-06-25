@@ -1,82 +1,243 @@
 <!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>PTM2001</title>
-        <link
-            rel="stylesheet"
-            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css"
-        />
-        <link
-            rel="stylesheet"
-            href="https://cdnjs.cloudflare.com/ajax/libs/limontesweetalert2/7.2.0/sweetalert2.min.css/>"
-        />
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/7.2.0/sweetalert2.all.min.js"></script>
-        
-        
-        <link rel="stylesheet" href="styles2.css" />
-    </head>
-    <body>
-        <div class="author">
-            <p>Tác giả: Phạm Quang Trung</p>
-            <p>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;Phan Tiến Mạnh</p>
-          </div>
-        <div class="loading" id="loading" >
-            <img src="5Q0v.gif" alt="loading">
-        </div>
-        <div class="container">
-            <div class="header">
-                <div class="header__icon">
-                    <i class='fas fa-heartbeat'></i>
-                </div>
-                <div class="header__title">
-                    <h2>Đăng nhập CAOS-V2</h2>
-                </div>
-            </div>
-            <form
-                action=""
-                class="form"
-                onsubmit="onSubmitForm(this);
-                return false;"
-            >
-                <div class="form__username">
-                    <div class="form__username--icon form__icon">
-                        <i class="fas fa-user"></i>
-                    </div>
-                    <div class="form__username--input form__input">
-                        <input
-                            type="text"
-                            id="username"
-                            placeholder="Tên đăng nhập CAOS-V2"
-                            name="username"
-                        />
-                    </div>
-                </div>
-                <p id="errorUsername"></p>
-                <div class="form__password">
-                    <div class="form__password--icon form__icon">
-                        <i class="fas fa-lock"></i>
-                    </div>
-                    <div class="form__password--input form__input">
-                        <input
-                            type="password"
-                            id="password"
-                            placeholder="Mật khẩu"
-                            name="password"
-                        />
-                        <span class="fas fa-eye" id="togglePassword"></span>
-                    </div>
-                </div>
-                <p id="errorPassword"></p>
-                <div class="form__submit">
-                    <button type="submit">
-                        <i class="fas fa-arrow-right"></i>
-                    </button>
-                </div>
-            </form>
-        </div>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CAOS-V2 — Đăng nhập</title>
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
+    :root {
+      --primary: #1a5fa8;
+      --accent:  #0e9e6e;
+      --bg:      #f0f4f8;
+      --card:    #ffffff;
+      --text:    #1a2133;
+      --muted:   #6b7a99;
+      --border:  #dde3ec;
+      --error:   #c0392b;
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      min-height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+      /* Ảnh máy xạ trị BV 108 làm nền */
+      background-image: linear-gradient(rgba(15,30,50,0.72), rgba(15,30,50,0.72)),
+        url('varian.jpg');
+      background-size: cover; background-position: center;
+    }
+    .card {
+      background: rgba(255,255,255,0.96);
+      border-radius: 14px;
+      padding: 40px 36px;
+      width: 100%; max-width: 400px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+    .logos {
+      display: flex; justify-content: center; align-items: center;
+      gap: 18px; margin-bottom: 24px;
+    }
+    .logos img { height: 52px; object-fit: contain; }
+    .title {
+      text-align: center; margin-bottom: 6px;
+      font-size: 1.35rem; font-weight: 600; color: var(--text);
+    }
+    .subtitle {
+      text-align: center; font-size: 0.78rem; color: var(--muted);
+      margin-bottom: 28px; line-height: 1.5;
+    }
+    .field { margin-bottom: 16px; }
+    .field label {
+      display: block; font-size: 0.78rem; font-weight: 500;
+      color: var(--muted); margin-bottom: 5px;
+    }
+    .field input {
+      width: 100%; padding: 10px 13px;
+      border: 1px solid var(--border); border-radius: 8px;
+      font-size: 0.9rem; font-family: inherit; color: var(--text);
+      transition: border-color .15s, box-shadow .15s;
+    }
+    .field input:focus {
+      outline: none; border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(26,95,168,0.12);
+    }
+    .btn-login {
+      width: 100%; padding: 11px;
+      background: var(--primary); color: white;
+      border: none; border-radius: 8px;
+      font-size: 0.9rem; font-weight: 600;
+      cursor: pointer; transition: background .15s;
+      margin-top: 4px;
+    }
+    .btn-login:hover { background: #134a85; }
+    .btn-login:disabled { background: #aaa; cursor: not-allowed; }
 
-        <script src="script2.js"></script>
-    </body>
+    .divider {
+      display: flex; align-items: center; gap: 10px;
+      margin: 18px 0; color: var(--muted); font-size: 0.75rem;
+    }
+    .divider::before, .divider::after {
+      content: ''; flex: 1; height: 1px; background: var(--border);
+    }
+
+    .btn-google {
+      width: 100%; padding: 10px;
+      background: white; color: var(--text);
+      border: 1px solid var(--border); border-radius: 8px;
+      font-size: 0.88rem; font-weight: 500;
+      cursor: pointer; display: flex; align-items: center;
+      justify-content: center; gap: 10px;
+      transition: background .15s, box-shadow .15s;
+    }
+    .btn-google:hover { background: #f8fafc; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+    .btn-google img { width: 20px; }
+
+    .error-msg {
+      background: #fdecea; color: var(--error);
+      border: 1px solid #f5c0bc; border-radius: 7px;
+      padding: 9px 12px; font-size: 0.8rem;
+      margin-top: 12px; display: none;
+    }
+
+    .loading-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.5); z-index: 99;
+      align-items: center; justify-content: center;
+    }
+    .spinner {
+      width: 44px; height: 44px;
+      border: 4px solid rgba(255,255,255,0.3);
+      border-top-color: white; border-radius: 50%;
+      animation: spin .8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .footer-note {
+      text-align: center; font-size: 0.7rem; color: var(--muted);
+      margin-top: 22px; line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+
+<div class="loading-overlay" id="loading">
+  <div class="spinner"></div>
+</div>
+
+<div class="card">
+  <div class="logos">
+    <img src="logo108.png" alt="BV 108">
+    <img src="logohust.png" alt="BKHN">
+  </div>
+  <div class="title">CAOS-V2</div>
+  <div class="subtitle">
+    Collimator Angle Optimization for SRS<br>
+    Đăng nhập để sử dụng hệ thống
+  </div>
+
+  <!-- Email / Password login -->
+  <div class="field">
+    <label>Email</label>
+    <input type="email" id="email" placeholder="email@hospital.vn" autocomplete="email">
+  </div>
+  <div class="field">
+    <label>Mật khẩu</label>
+    <input type="password" id="password" placeholder="••••••••" autocomplete="current-password">
+  </div>
+  <button class="btn-login" id="btnLogin" onclick="loginEmail()">Đăng nhập</button>
+
+  <div class="divider">hoặc</div>
+
+  <!-- Google login -->
+  <button class="btn-google" onclick="loginGoogle()">
+    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google">
+    Đăng nhập bằng Google
+  </button>
+
+  <div class="error-msg" id="errorMsg"></div>
+
+  <div class="footer-note">
+    TS. Phạm Quang Trung · BV Trung ương Quân đội 108<br>
+    Chỉ dành cho nhân viên y tế được cấp quyền
+  </div>
+</div>
+
+<script>
+// ── Firebase Config — thay bằng config của anh từ Firebase Console ──
+const firebaseConfig = {
+  apiKey:            "AIzaSyDc6A45Nh2tlTO-q3nqHEqTjCHhaLpRBn8",
+  authDomain:        "caos-v1.firebaseapp.com",
+  projectId:         "caos-v1",
+  storageBucket:     "caos-v1.firebasestorage.app",
+  messagingSenderId: "29375976118",
+  appId:             "1:29375976118:web:66696b738010c830814c17"
+};
+
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+
+// Nếu đã đăng nhập → chuyển thẳng sang app
+auth.onAuthStateChanged(user => {
+  if (user) window.location.href = "index.html";
+});
+
+function showLoading(v) {
+  document.getElementById('loading').style.display = v ? 'flex' : 'none';
+}
+
+function showError(msg) {
+  const el = document.getElementById('errorMsg');
+  el.textContent = msg; el.style.display = 'block';
+}
+
+function clearError() {
+  document.getElementById('errorMsg').style.display = 'none';
+}
+
+async function loginEmail() {
+  clearError();
+  const email    = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value;
+  if (!email || !password) return showError('Vui lòng nhập email và mật khẩu.');
+
+  showLoading(true);
+  try {
+    await auth.signInWithEmailAndPassword(email, password);
+    // onAuthStateChanged sẽ redirect
+  } catch (err) {
+    showLoading(false);
+    const msgs = {
+      'auth/wrong-password':    'Mật khẩu không chính xác.',
+      'auth/user-not-found':    'Email không tồn tại trong hệ thống.',
+      'auth/invalid-email':     'Định dạng email không hợp lệ.',
+      'auth/too-many-requests': 'Quá nhiều lần thử. Vui lòng thử lại sau.',
+    };
+    showError(msgs[err.code] || 'Lỗi đăng nhập: ' + err.message);
+  }
+}
+
+async function loginGoogle() {
+  clearError();
+  showLoading(true);
+  try {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    await auth.signInWithPopup(provider);
+    // onAuthStateChanged redirect
+  } catch (err) {
+    showLoading(false);
+    if (err.code !== 'auth/popup-closed-by-user')
+      showError('Lỗi Google login: ' + err.message);
+  }
+}
+
+// Enter key
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter') loginEmail();
+});
+</script>
+</body>
 </html>
